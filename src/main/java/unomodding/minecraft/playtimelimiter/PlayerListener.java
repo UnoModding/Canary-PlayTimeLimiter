@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2014 by ATLauncher and Contributors
+ * Copyright 2014 by RyanTheAlmighty, UnoModding and Contributors
  *
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
@@ -8,51 +8,51 @@ package unomodding.minecraft.playtimelimiter;
 
 import java.io.File;
 
-import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import net.canarymod.hook.HookHandler;
+import net.canarymod.hook.player.ConnectionHook;
+import net.canarymod.hook.player.DisconnectionHook;
+import net.canarymod.plugin.PluginListener;
 
+import org.bukkit.ChatColor;
 import unomodding.minecraft.playtimelimiter.utils.FileUtils;
 import unomodding.minecraft.playtimelimiter.utils.Timestamper;
 
-public class PlayerListener implements Listener {
+public class PlayerListener implements PluginListener {
     private final PlayTimeLimiter plugin;
 
     public PlayerListener(PlayTimeLimiter instance) {
         this.plugin = instance;
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @HookHandler
+    public void onPlayerJoin(ConnectionHook hook) {
         FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"),
-                String.format("[%s] %s logged in", Timestamper.now(), event.getPlayer().getName()));
-        if (this.plugin.getTimeAllowedInSeconds(event.getPlayer().getName()) <= 0) {
+                String.format("[%s] %s logged in", Timestamper.now(), hook.getPlayer().getName()));
+        if (this.plugin.getTimeAllowedInSeconds(hook.getPlayer().getName()) <= 0) {
             FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"),
                     String.format("[%s] %s was kicked for exceeding play time", Timestamper.now(),
-                            event.getPlayer().getName()));
-            event.getPlayer().kickPlayer(
+                            hook.getPlayer().getName()));
+            hook.getPlayer().kick(
                     "You have exceeded the time allowed to play! Come back in "
                             + this.plugin.secondsToDaysHoursSecondsString(this.plugin
                                     .secondsUntilNextDay()) + "!");
         } else {
-            this.plugin.setPlayerLoggedIn(event.getPlayer().getName());
+            this.plugin.setPlayerLoggedIn(hook.getPlayer().getName());
         }
-        event.getPlayer().sendMessage(
+        hook.getPlayer().message(
                 "You have "
                         + ChatColor.GREEN
                         + plugin.secondsToDaysHoursSecondsString(plugin
-                                .getTimeAllowedInSeconds(event.getPlayer().getName()))
+                                .getTimeAllowedInSeconds(hook.getPlayer().getName()))
                         + ChatColor.RESET + " of playtime left!");
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    @HookHandler
+    public void onPlayerQuit(DisconnectionHook hook) {
         FileUtils
                 .appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"), String
-                        .format("[%s] %s logged out", Timestamper.now(), event.getPlayer()
+                        .format("[%s] %s logged out", Timestamper.now(), hook.getPlayer()
                                 .getName()));
-        this.plugin.setPlayerLoggedOut(event.getPlayer().getName());
+        this.plugin.setPlayerLoggedOut(hook.getPlayer().getName());
     }
 }

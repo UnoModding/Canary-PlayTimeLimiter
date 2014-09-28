@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 by RyanTheAllmighty and Contributors
+ * Copyright 2014 by RyanTheAlmighty, UnoModding and Contributors
  *
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.canarymod.Canary;
+import net.canarymod.chat.TextFormat;
+import net.canarymod.commandsys.CommandDependencyException;
+import net.canarymod.plugin.Plugin;
 
 import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 import unomodding.minecraft.playtimelimiter.threads.PlayTimeCheckerTask;
@@ -29,14 +29,7 @@ import unomodding.minecraft.playtimelimiter.threads.ShutdownThread;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-/**
- * No Play So Long plugin for Bukkit
- * 
- * @author RyanTheAllmighty
- */
-public class PlayTimeLimiter extends JavaPlugin {
-    private final PlayerListener playerListener = new PlayerListener(this);
-    private final BlockListener blockListener = new BlockListener();
+public class PlayTimeLimiter extends Plugin {
     private Map<String, Integer> timePlayed = new HashMap<String, Integer>();
     private Map<String, Integer> timeLoggedIn = new HashMap<String, Integer>();
     private Map<String, Boolean> seenWarningMessages = new HashMap<String, Boolean>();
@@ -47,13 +40,11 @@ public class PlayTimeLimiter extends JavaPlugin {
     private boolean started = false;
     private final Gson GSON = new Gson();
 
-    @Override
-    public void onDisable() {
+    public void disable() {
         this.savePlayTime(); // Save the playtime to file on plugin disable
     }
 
-    @Override
-    public void onEnable() {
+    public boolean enable() {
         if (!this.shutdownHookAdded) {
             this.shutdownHookAdded = true;
             try {
@@ -62,48 +53,48 @@ public class PlayTimeLimiter extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-        // Register our events
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(playerListener, this);
-        pm.registerEvents(blockListener, this);
 
-        // Register our commands
-        getCommand("playtime").setExecutor(new PlayTimeCommand(this));
-
-        if (getConfig().isSet("timeStarted")) {
+        if (getConfig().containsKey("timeStarted")) {
             this.started = true;
         }
 
-        if (!getConfig().isSet("initialTime")) {
-            getConfig().set("initialTime", 28800);
-            saveConfig();
+        if (!getConfig().containsKey("initialTime")) {
+            getConfig().setInt("initialTime", 28800);
+            getConfig().save();
         }
 
-        if (!getConfig().isSet("timePerDay")) {
-            getConfig().set("timePerDay", 3600);
-            saveConfig();
+        if (!getConfig().containsKey("timePerDay")) {
+            getConfig().setInt("timePerDay", 3600);
+            getConfig().save();
         }
 
-        if (!getConfig().isSet("secondsBetweenPlayTimeChecks")) {
-            getConfig().set("secondsBetweenPlayTimeChecks", 10);
-            saveConfig();
+        if (!getConfig().containsKey("secondsBetweenPlayTimeChecks")) {
+            getConfig().setInt("secondsBetweenPlayTimeChecks", 10);
+            getConfig().save();
         }
 
-        if (!getConfig().isSet("secondsBetweenPlayTimeSaving")) {
-            getConfig().set("secondsBetweenPlayTimeSaving", 600);
-            saveConfig();
+        if (!getConfig().containsKey("secondsBetweenPlayTimeSaving")) {
+            getConfig().setInt("secondsBetweenPlayTimeSaving", 600);
+            getConfig().save();
         }
 
-        getLogger()
+        getLogman()
                 .info(String.format("Server started at %s which was %s seconds ago!", getConfig()
-                        .get("timeStarted"), this.secondsToDaysHoursSecondsString((int) ((System
+                        .getInt("timeStarted"), this.secondsToDaysHoursSecondsString((int) ((System
                         .currentTimeMillis() / 1000) - getConfig().getInt("timeStarted")))));
-
-        PluginDescriptionFile pdfFile = this.getDescription();
-        getLogger().info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
         // Load the playtime from file
         this.loadPlayTime();
+        
+        // Enable Listener
+     	Canary.hooks().registerListener(new PlayerListener(this), this);
+     		
+     	// Enable Commands
+     	try {
+            Canary.commands().registerCommands(new PlayTimeCommands(this), this, false);
+        } catch (CommandDependencyException e) {
+            e.printStackTrace();
+        }
 
         if (savePlayTimeTimer == null) {
             this.savePlayTimeTimer = new Timer();
@@ -116,6 +107,7 @@ public class PlayTimeLimiter extends JavaPlugin {
             this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000,
                     getConfig().getInt("secondsBetweenPlayTimeChecks") * 1000);
         }
+        return false;
     }
 
     public int secondsUntilNextDay() {
@@ -211,7 +203,7 @@ public class PlayTimeLimiter extends JavaPlugin {
             }
             this.timePlayed.put(player, timePlayed);
             this.timeLoggedIn.remove(player);
-            getLogger().info(
+            getLogman().info(
                     "Player " + player + " played for a total of " + timePlayed + " seconds!");
             this.savePlayTime();
         }
@@ -245,12 +237,12 @@ public class PlayTimeLimiter extends JavaPlugin {
             this.started = true;
             String initial = (getConfig().getInt("initialTime") / 60 / 60) + "";
             String perday = (getConfig().getInt("timePerDay") / 60 / 60) + "";
-            getServer().broadcastMessage(
-                    ChatColor.GREEN + "Playtime has now started! You have " + initial
+            Canary.getServer().broadcastMessage(
+                    TextFormat.GREEN + "Playtime has now started! You have " + initial
                             + " hour/s of playtime to start with and " + perday
                             + " hour/s of playtime added per day!");
-            getConfig().set("timeStarted", (System.currentTimeMillis() / 1000));
-            saveConfig();
+            getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
+            getConfig().save();
             return true;
         }
     }
@@ -268,10 +260,10 @@ public class PlayTimeLimiter extends JavaPlugin {
             getDataFolder().mkdirs();
         }
         if (!file.exists()) {
-            getLogger().warning("playtime.json file missing! Not loading in values");
+            getLogman().warn("playtime.json file missing! Not loading in values");
             return;
         }
-        getLogger().info("Loading data from playtime.json");
+        getLogman().info("Loading data from playtime.json");
         FileReader fileReader;
         try {
             fileReader = new FileReader(file);
@@ -304,7 +296,7 @@ public class PlayTimeLimiter extends JavaPlugin {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
-        getLogger().info("Saving data to playtime.json");
+        getLogman().info("Saving data to playtime.json");
         FileWriter fw = null;
         BufferedWriter bw = null;
         try {
@@ -328,4 +320,8 @@ public class PlayTimeLimiter extends JavaPlugin {
             e.printStackTrace();
         }
     }
+
+	public File getDataFolder() {
+		return new File(Canary.getWorkingPath() + "/PlayTimeLimiter");
+	}
 }
