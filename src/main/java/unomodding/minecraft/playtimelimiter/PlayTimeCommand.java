@@ -4,12 +4,10 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package me.ryandowling.noplaysolong;
+package unomodding.minecraft.playtimelimiter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import me.ryandowling.noplaysolong.exceptions.UnknownPlayerException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -19,10 +17,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-public class PlayTimeCommand implements CommandExecutor {
-    private final NoPlaySoLong plugin;
+import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 
-    public PlayTimeCommand(NoPlaySoLong plugin) {
+public class PlayTimeCommand implements CommandExecutor {
+    private final PlayTimeLimiter plugin;
+
+    public PlayTimeCommand(PlayTimeLimiter plugin) {
         this.plugin = plugin;
     }
 

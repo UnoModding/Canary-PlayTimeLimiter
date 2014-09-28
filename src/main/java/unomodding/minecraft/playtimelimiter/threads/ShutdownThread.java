@@ -4,14 +4,14 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package me.ryandowling.noplaysolong.threads;
+package unomodding.minecraft.playtimelimiter.threads;
 
-import me.ryandowling.noplaysolong.NoPlaySoLong;
+import unomodding.minecraft.playtimelimiter.PlayTimeLimiter;
 
 public class ShutdownThread extends Thread {
-    private final NoPlaySoLong plugin;
+    private final PlayTimeLimiter plugin;
 
-    public ShutdownThread(NoPlaySoLong plugin) {
+    public ShutdownThread(PlayTimeLimiter plugin) {
         this.plugin = plugin;
     }
 

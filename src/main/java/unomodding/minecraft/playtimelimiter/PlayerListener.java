@@ -4,12 +4,9 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package me.ryandowling.noplaysolong;
+package unomodding.minecraft.playtimelimiter;
 
 import java.io.File;
-
-import me.ryandowling.noplaysolong.utils.FileUtils;
-import me.ryandowling.noplaysolong.utils.Timestamper;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -17,10 +14,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerListener implements Listener {
-    private final NoPlaySoLong plugin;
+import unomodding.minecraft.playtimelimiter.utils.FileUtils;
+import unomodding.minecraft.playtimelimiter.utils.Timestamper;
 
-    public PlayerListener(NoPlaySoLong instance) {
+public class PlayerListener implements Listener {
+    private final PlayTimeLimiter plugin;
+
+    public PlayerListener(PlayTimeLimiter instance) {
         this.plugin = instance;
     }
 

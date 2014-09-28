@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package me.ryandowling.noplaysolong;
+package unomodding.minecraft.playtimelimiter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,15 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 
-import me.ryandowling.noplaysolong.exceptions.UnknownPlayerException;
-import me.ryandowling.noplaysolong.threads.PlayTimeCheckerTask;
-import me.ryandowling.noplaysolong.threads.PlayTimeSaverTask;
-import me.ryandowling.noplaysolong.threads.ShutdownThread;
-
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
+import unomodding.minecraft.playtimelimiter.threads.PlayTimeCheckerTask;
+import unomodding.minecraft.playtimelimiter.threads.PlayTimeSaverTask;
+import unomodding.minecraft.playtimelimiter.threads.ShutdownThread;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,7 +34,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author RyanTheAllmighty
  */
-public class NoPlaySoLong extends JavaPlugin {
+public class PlayTimeLimiter extends JavaPlugin {
     private final PlayerListener playerListener = new PlayerListener(this);
     private final BlockListener blockListener = new BlockListener();
     private Map<String, Integer> timePlayed = new HashMap<String, Integer>();

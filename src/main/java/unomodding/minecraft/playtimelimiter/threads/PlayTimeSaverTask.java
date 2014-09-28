@@ -4,16 +4,16 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package me.ryandowling.noplaysolong.threads;
+package unomodding.minecraft.playtimelimiter.threads;
 
 import java.util.TimerTask;
 
-import me.ryandowling.noplaysolong.NoPlaySoLong;
+import unomodding.minecraft.playtimelimiter.PlayTimeLimiter;
 
 public class PlayTimeSaverTask extends TimerTask {
-    private final NoPlaySoLong plugin;
+    private final PlayTimeLimiter plugin;
 
-    public PlayTimeSaverTask(NoPlaySoLong instance) {
+    public PlayTimeSaverTask(PlayTimeLimiter instance) {
         this.plugin = instance;
     }
 
