@@ -10,7 +10,6 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
-import net.canarymod.commandsys.TabComplete;
 import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 
 public class PlayTimeCommands implements CommandListener {
@@ -23,10 +22,8 @@ public class PlayTimeCommands implements CommandListener {
     @Command(aliases = {"playtime"},
 			description = "playtime command",
 			permissions = {},
-			toolTip = "/playtime <argument> (argument) (argument)",
-			min = 2,
-			max = 4)
-    //@TabComplete(commands = {"playtime start", "playtime add", "playtime remove", "playtime check"}) //TODO: check how tabcomplete works
+			toolTip = "/playtime <start|add|remove|check> [parameters...]",
+			version = 2)
     public void playtimeCommand(MessageReceiver caller, String[] args) {
         if (args[0].equals("start") && args.length == 1) {
             if (!caller.hasPermission("playtimelimiter.start")) {
@@ -37,6 +34,7 @@ public class PlayTimeCommands implements CommandListener {
                 	caller.message(TextFormat.RED + "Playtime already started!");
                 }
             }
+            return;
         } else if (args[0].equals("add") && args.length == 3) {
             if (!plugin.hasStarted()) {
                 caller.message(TextFormat.RED + "Playtime hasn't started yet!");
@@ -54,6 +52,7 @@ public class PlayTimeCommands implements CommandListener {
                     caller.message(TextFormat.RED + "Invalid number of seconds given!");
                 }
             }
+            return;
         } else if (args[0].equals("remove") && args.length == 3) {
             if (!plugin.hasStarted()) {
                 caller.message(TextFormat.RED + "Playtime hasn't started yet!");
@@ -74,6 +73,7 @@ public class PlayTimeCommands implements CommandListener {
                     caller.message(TextFormat.RED + e.getMessage());
                 }
             }
+            return;
         } else if (args[0].equals("check")) {
             if (!plugin.hasStarted()) {
                 caller.message(TextFormat.RED + "Playtime hasn't started yet!");
@@ -91,6 +91,7 @@ public class PlayTimeCommands implements CommandListener {
                             + plugin.secondsToDaysHoursSecondsString(plugin
                                     .getTimeAllowedInSeconds(caller.getName())) + " remaining!");
                 }
+                return;
             } else if (args.length == 2) {
                 if (!caller.hasPermission("playtimelimiter.playtime.check.others")) {
                     caller.message(TextFormat.RED
@@ -105,7 +106,30 @@ public class PlayTimeCommands implements CommandListener {
                             + plugin.secondsToDaysHoursSecondsString(plugin
                                     .getTimeAllowedInSeconds(args[1])) + " remaining!");
                 }
+                return;
             }
+        }
+        printUsage(caller);
+    }
+    
+    public void printUsage(MessageReceiver sender) {
+    	sender.message(TextFormat.YELLOW + "/playtime usage:");
+        if (sender.hasPermission("playtimelimiter.playtime.add")) {
+        	sender.message(TextFormat.CYAN + "/playtime add [user] [time]" + TextFormat.RESET
+                    + " - Add time in seconds to the user's playtime.");
+        }
+        if (sender.hasPermission("playtimelimiter.playtime.check.others")) {
+        	sender.message(TextFormat.CYAN
+                    + "/playtime check [user]"
+                    + TextFormat.RESET
+                    + " - Check the time played and time left for a given user, or if blank, for yourself.");
+        } else if (sender.hasPermission("playtimelimiter.playtime.check.self")) {
+        	sender.message(TextFormat.CYAN + "/playtime check" + TextFormat.RESET
+                    + " - Check the time played and time left for yourself.");
+        }
+        if (sender.hasPermission("playtimelimiter.playtime.remove")) {
+        	sender.message(TextFormat.CYAN + "/playtime remove [user] [time]" + TextFormat.RESET
+                    + " - Remove time in seconds from the user's playtime.");
         }
     }
 }
