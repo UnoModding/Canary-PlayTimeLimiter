@@ -13,23 +13,12 @@
 
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public</url>
-		</repository>
-		<repository>
 			<id>vi-repo</id>
 			<url>http://repo.visualillusionsent.net/repository/public</url>
 		</repository>
 	</repositories>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.6.4-R2.0</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>net.canarymod</groupId>
 			<artifactId>CanaryLib</artifactId>

@@ -8,12 +8,11 @@ package unomodding.minecraft.playtimelimiter;
 
 import java.io.File;
 
+import net.canarymod.chat.TextFormat;
 import net.canarymod.hook.HookHandler;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.DisconnectionHook;
 import net.canarymod.plugin.PluginListener;
-
-import org.bukkit.ChatColor;
 import unomodding.minecraft.playtimelimiter.utils.FileUtils;
 import unomodding.minecraft.playtimelimiter.utils.Timestamper;
 
@@ -41,10 +40,10 @@ public class PlayerListener implements PluginListener {
         }
         hook.getPlayer().message(
                 "You have "
-                        + ChatColor.GREEN
+                        + TextFormat.GREEN
                         + plugin.secondsToDaysHoursSecondsString(plugin
                                 .getTimeAllowedInSeconds(hook.getPlayer().getName()))
-                        + ChatColor.RESET + " of playtime left!");
+                        + TextFormat.RESET + " of playtime left!");
     }
 
     @HookHandler
