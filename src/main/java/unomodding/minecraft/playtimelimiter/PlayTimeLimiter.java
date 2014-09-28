@@ -54,9 +54,10 @@ public class PlayTimeLimiter extends Plugin {
             }
         }
 
-        if (getConfig().containsKey("timeStarted")) {
-            this.started = true;
+        if(!getConfig().containsKey("timeStarted")) {
+        	getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
         }
+        this.started = true;
 
         if (!getConfig().containsKey("initialTime")) {
             getConfig().setInt("initialTime", 28800);
@@ -107,7 +108,7 @@ public class PlayTimeLimiter extends Plugin {
             this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000,
                     getConfig().getInt("secondsBetweenPlayTimeChecks") * 1000);
         }
-        return false;
+        return true;
     }
 
     public int secondsUntilNextDay() {

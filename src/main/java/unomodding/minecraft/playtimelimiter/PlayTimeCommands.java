@@ -26,7 +26,7 @@ public class PlayTimeCommands implements CommandListener {
 			toolTip = "/playtime <argument> (argument) (argument)",
 			min = 2,
 			max = 4)
-    @TabComplete(commands = {"playtime start", "playtime add", "playtime remove", "playtime check"})
+    //@TabComplete(commands = {"playtime start", "playtime add", "playtime remove", "playtime check"}) //TODO: check how tabcomplete works
     public void playtimeCommand(MessageReceiver caller, String[] args) {
         if (args[0].equals("start") && args.length == 1) {
             if (!caller.hasPermission("playtimelimiter.start")) {
