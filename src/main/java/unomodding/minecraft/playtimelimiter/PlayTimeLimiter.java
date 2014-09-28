@@ -323,6 +323,6 @@ public class PlayTimeLimiter extends Plugin {
     }
 
 	public File getDataFolder() {
-		return new File(Canary.getWorkingPath() + "/PlayTimeLimiter");
+		return new File(Canary.getWorkingPath() + "/config/PlayTimeLimiter");
 	}
 }
