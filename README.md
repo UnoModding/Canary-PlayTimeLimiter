@@ -11,7 +11,7 @@ PlayTimeLimiter is a Canary plugin for Minecraft to only allow players to play f
 
 ### Coding Standards
 
-+ Please keep all line lengths to 100 characters and use 4 spaces rather than tab characters
++ Please keep all line lengths to 110 characters and use 4 spaces rather than tab characters
 + Please keep all variables at the top of the class
 + Please keep all inner classes at the bottom
 + Please don't use star imports

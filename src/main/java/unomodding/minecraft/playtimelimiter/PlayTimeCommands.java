@@ -10,6 +10,7 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
+import net.canarymod.commandsys.TabComplete;
 import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 
 public class PlayTimeCommands implements CommandListener {
@@ -25,15 +26,15 @@ public class PlayTimeCommands implements CommandListener {
 			toolTip = "/playtime <argument> (argument) (argument)",
 			min = 2,
 			max = 4)
-    public void onStartCommand(MessageReceiver caller, String[] args) {
+    @TabComplete(commands = {"playtime start", "playtime add", "playtime remove", "playtime check"})
+    public void playtimeCommand(MessageReceiver caller, String[] args) {
         if (args[0].equals("start") && args.length == 1) {
             if (!caller.hasPermission("playtimelimiter.start")) {
                 caller.message(TextFormat.RED
                         + "You don't have permission to start the playtime counter!");
             } else {
-                if (plugin.start()) {
-                } else {
-                    caller.message(TextFormat.RED + "Playtime already started!");
+                if (!plugin.start()) {
+                	caller.message(TextFormat.RED + "Playtime already started!");
                 }
             }
         } else if (args[0].equals("add") && args.length == 3) {
