@@ -6,10 +6,14 @@
  */
 package unomodding.minecraft.playtimelimiter;
 
+import java.util.List;
+
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
+import net.canarymod.commandsys.TabComplete;
+import net.canarymod.commandsys.TabCompleteHelper;
 import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 
 public class PlayTimeCommands implements CommandListener {
@@ -59,7 +63,7 @@ public class PlayTimeCommands implements CommandListener {
             }
             if (!caller.hasPermission("playtimelimiter.playtime.remove")) {
                 caller.message(TextFormat.RED
-                        + "You don't have permission to remove time from a players playtime!!");
+                        + "You don't have permission to remove time from a players playtime!");
             } else {
                 try {
                     plugin.removePlayTime(args[1], Integer.parseInt(args[2]));
@@ -131,5 +135,10 @@ public class PlayTimeCommands implements CommandListener {
         	sender.message(TextFormat.CYAN + "/playtime remove [user] [time]" + TextFormat.RESET
                     + " - Remove time in seconds from the user's playtime.");
         }
+    }
+    
+    @TabComplete(commands = {"playtime"})
+    public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
+        return parameters.length == 1 ? TabCompleteHelper.matchTo(parameters, new String[]{"start", "add", "remove", "check"}) : null;
     }
 }
