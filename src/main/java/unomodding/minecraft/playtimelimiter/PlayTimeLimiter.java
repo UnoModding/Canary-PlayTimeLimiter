@@ -247,6 +247,15 @@ public class PlayTimeLimiter extends Plugin {
             return true;
         }
     }
+    
+    public boolean stop() {
+    	if (!this.started) {
+            return false;
+        } else {
+            this.started = false;
+            return true;
+        }
+    }
 
     public boolean hasStarted() {
         return this.started;
