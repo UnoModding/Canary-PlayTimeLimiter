@@ -8,6 +8,7 @@ package unomodding.minecraft.playtimelimiter;
 
 import java.util.List;
 
+import net.canarymod.Canary;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.Command;
@@ -37,24 +38,20 @@ public class PlayTimeCommands implements CommandListener {
                 } else {
                     if(!plugin.start()) {
                     	caller.message(TextFormat.RED + "Playtime already started!");
+                    } else {
+                    	caller.message(TextFormat.RED + "Playtime started!");
                     }
                 }
                 return;
-            } else if(args[0].equals("add") && args.length == 3) {
-                if(!plugin.hasStarted()) {
-                    caller.message(TextFormat.RED + "Playtime hasn't started yet!");
-                }
-                if (!caller.hasPermission("playtimelimiter.playtime.add")) {
+            } else if(args[0].equals("stop")) {
+            	if(!caller.hasPermission("playtimelimiter.playtime.stop")) {
                     caller.message(TextFormat.RED
-                            + "You don't have permission to add time to a players playtime!");
+                            + "You don't have permission to stop the playtime counter!");
                 } else {
-                    try {
-                        plugin.addPlayTime(args[1], Integer.parseInt(args[2]));
-                        caller.message(TextFormat.GREEN + "Added " + Integer.parseInt(args[2])
-                                + " seconds of playtime to " + args[1]);
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        caller.message(TextFormat.RED + "Invalid number of seconds given!");
+                    if(!plugin.stop()) {
+                    	caller.message(TextFormat.RED + "Playtime already stopped!");
+                    } else {
+                    	caller.message(TextFormat.RED + "Playtime stopped!");
                     }
                 }
                 return;
@@ -62,13 +59,31 @@ public class PlayTimeCommands implements CommandListener {
                 if(!plugin.hasStarted()) {
                     caller.message(TextFormat.RED + "Playtime hasn't started yet!");
                 }
-                if(!caller.hasPermission("playtimelimiter.playtime.remove")) {
+                if (!caller.hasPermission("playtimelimiter.playtime.remove")) {
                     caller.message(TextFormat.RED
-                            + "You don't have permission to remove time from a players playtime!");
+                            + "You don't have permission to add remove from a players playtime!");
+                } else {
+                    try {
+                        plugin.addPlayTime(args[1], Integer.parseInt(args[2]));
+                        caller.message(TextFormat.GREEN + "Removed " + Integer.parseInt(args[2])
+                                + " seconds of playtime to " + args[1]);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        caller.message(TextFormat.RED + "Invalid number of seconds given!");
+                    }
+                }
+                return;
+            } else if(args[0].equals("add") && args.length == 3) {
+                if(!plugin.hasStarted()) {
+                    caller.message(TextFormat.RED + "Playtime hasn't started yet!");
+                }
+                if(!caller.hasPermission("playtimelimiter.playtime.add")) {
+                    caller.message(TextFormat.RED
+                            + "You don't have permission to add time to a players playtime!");
                 } else {
                     try {
                         plugin.removePlayTime(args[1], Integer.parseInt(args[2]));
-                        caller.message(TextFormat.GREEN + "Removed " + Integer.parseInt(args[2])
+                        caller.message(TextFormat.GREEN + "Added " + Integer.parseInt(args[2])
                                 + " seconds of playtime from " + args[1]);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
@@ -113,16 +128,6 @@ public class PlayTimeCommands implements CommandListener {
                     }
                     return;
                 }
-            } else if(args[0].equals("stop")) {
-            	if(!caller.hasPermission("playtimelimiter.playtime.stop")) {
-                    caller.message(TextFormat.RED
-                            + "You don't have permission to stop the playtime counter!");
-                } else {
-                    if(!plugin.stop()) {
-                    	caller.message(TextFormat.RED + "Playtime already stopped!");
-                    }
-                }
-                return;
             }
         }
         printUsage(caller);
@@ -133,10 +138,12 @@ public class PlayTimeCommands implements CommandListener {
     	if(sender.hasPermission("playtimelimiter.playtime.start")){
     		sender.message(TextFormat.CYAN + "/playtime start" + TextFormat.RESET
                     + " - Start the playtime counter.");
-        } else if(sender.hasPermission("playtimelimiter.playtime.stop")){
+        }
+    	if(sender.hasPermission("playtimelimiter.playtime.stop")){
     		sender.message(TextFormat.CYAN + "/playtime stop" + TextFormat.RESET
                     + " - Stop the playtime counter.");
-        } else if(sender.hasPermission("playtimelimiter.playtime.add")) {
+        } 
+    	if(sender.hasPermission("playtimelimiter.playtime.add")) {
         	sender.message(TextFormat.CYAN + "/playtime add <user> <time>" + TextFormat.RESET
                     + " - Add time in seconds to the user's playtime.");
         }
@@ -157,6 +164,12 @@ public class PlayTimeCommands implements CommandListener {
     
     @TabComplete(commands = {"playtime"})
     public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
-        return parameters.length == 1 ? TabCompleteHelper.matchTo(parameters, new String[]{"start", "stop", "add", "remove", "check"}) : null;
+    	if(parameters.length == 1) {
+    		return TabCompleteHelper.matchTo(parameters, new String[]{"start", "stop", "add", "remove", "check"});
+    	} else if(parameters.length == 2 && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1].equals("check"))) {
+    		return TabCompleteHelper.matchTo(parameters, Canary.getServer().getKnownPlayerNames());
+    	} else {
+    		return null;
+    	}
     }
 }
