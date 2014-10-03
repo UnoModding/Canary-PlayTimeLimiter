@@ -24,7 +24,7 @@ public class PlayTimeCommands implements CommandListener {
         this.plugin = plugin;
     }
 
-    @Command(aliases = {"playtime"},
+    @Command(aliases = {"playtime", "pt"},
 			description = "playtime command",
 			permissions = {},
 			toolTip = "/playtime <start|stop|add|remove|check> [parameters...]",
@@ -58,6 +58,7 @@ public class PlayTimeCommands implements CommandListener {
             } else if(args[0].equals("remove") && args.length == 3) {
                 if(!plugin.hasStarted()) {
                     caller.message(TextFormat.RED + "Playtime hasn't started yet!");
+                    return;
                 }
                 if (!caller.hasPermission("playtimelimiter.playtime.remove")) {
                     caller.message(TextFormat.RED
@@ -76,6 +77,7 @@ public class PlayTimeCommands implements CommandListener {
             } else if(args[0].equals("add") && args.length == 3) {
                 if(!plugin.hasStarted()) {
                     caller.message(TextFormat.RED + "Playtime hasn't started yet!");
+                    return;
                 }
                 if(!caller.hasPermission("playtimelimiter.playtime.add")) {
                     caller.message(TextFormat.RED
@@ -162,7 +164,7 @@ public class PlayTimeCommands implements CommandListener {
         }
     }
     
-    @TabComplete(commands = {"playtime"})
+    @TabComplete(commands = {"playtime", "pt"})
     public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
     	if(parameters.length == 1) {
     		return TabCompleteHelper.matchTo(parameters, new String[]{"start", "stop", "add", "remove", "check"});
