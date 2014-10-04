@@ -29,7 +29,7 @@ import unomodding.minecraft.playtimelimiter.threads.ShutdownThread;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class PlayTimeLimiter extends Plugin {
+public final class PlayTimeLimiter extends Plugin {
     private Map<String, Integer> timePlayed = new HashMap<String, Integer>();
     private Map<String, Integer> timeLoggedIn = new HashMap<String, Integer>();
     private Map<String, Boolean> seenWarningMessages = new HashMap<String, Boolean>();
@@ -39,12 +39,14 @@ public class PlayTimeLimiter extends Plugin {
     private Timer checkPlayTimeTimer = null;
     private boolean started = false;
     private final Gson GSON = new Gson();
+	private static PlayTimeLimiter instance;
 
     public void disable() {
         this.savePlayTime(); // Save the playtime to file on plugin disable
     }
 
     public boolean enable() {
+    	instance = this;
         if (!this.shutdownHookAdded) {
             this.shutdownHookAdded = true;
             try {
@@ -333,5 +335,9 @@ public class PlayTimeLimiter extends Plugin {
 
 	public File getDataFolder() {
 		return new File(Canary.getWorkingPath() + "/config/PlayTimeLimiter");
+	}
+	
+	public static PlayTimeLimiter getInstance() {
+		return instance;
 	}
 }
