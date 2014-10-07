@@ -6,28 +6,22 @@
  */
 package unomodding.minecraft.playtimelimiter;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Timer;
 
 import net.canarymod.Canary;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.CommandDependencyException;
+import net.canarymod.database.Database;
+import net.canarymod.database.exceptions.DatabaseWriteException;
 import net.canarymod.plugin.Plugin;
-
 import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 import unomodding.minecraft.playtimelimiter.threads.PlayTimeCheckerTask;
 import unomodding.minecraft.playtimelimiter.threads.PlayTimeSaverTask;
 import unomodding.minecraft.playtimelimiter.threads.ShutdownThread;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public final class PlayTimeLimiter extends Plugin {
     private Map<String, Integer> timePlayed = new HashMap<String, Integer>();
@@ -38,7 +32,6 @@ public final class PlayTimeLimiter extends Plugin {
     private Timer savePlayTimeTimer = null;
     private Timer checkPlayTimeTimer = null;
     private boolean started = false;
-    private final Gson GSON = new Gson();
 	private static PlayTimeLimiter instance;
 
     public void disable() {
@@ -85,9 +78,6 @@ public final class PlayTimeLimiter extends Plugin {
                 .info(String.format("Server started at %s which was %s seconds ago!", getConfig()
                         .getInt("timeStarted"), this.secondsToDaysHoursSecondsString((int) ((System
                         .currentTimeMillis() / 1000) - getConfig().getInt("timeStarted")))));
-
-        // Load the playtime from file
-        this.loadPlayTime();
         
         // Enable Listener
      	Canary.hooks().registerListener(new PlayerListener(this), this);
@@ -263,33 +253,6 @@ public final class PlayTimeLimiter extends Plugin {
         return this.started;
     }
 
-    public void loadPlayTime() {
-        if (!hasStarted()) {
-            return;
-        }
-        File file = new File(getDataFolder(), "playtime.json");
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdirs();
-        }
-        if (!file.exists()) {
-            getLogman().warn("playtime.json file missing! Not loading in values");
-            return;
-        }
-        getLogman().info("Loading data from playtime.json");
-        FileReader fileReader;
-        try {
-            fileReader = new FileReader(file);
-            java.lang.reflect.Type type = new TypeToken<Map<String, Integer>>() {
-            }.getType();
-            this.timePlayed = GSON.fromJson(fileReader, type);
-            fileReader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void savePlayTime() {
         this.savePlayTime(false);
     }
@@ -298,38 +261,26 @@ public final class PlayTimeLimiter extends Plugin {
         if (!hasStarted()) {
             return;
         }
-
         if (force) {
             for (String key : this.timeLoggedIn.keySet()) {
                 this.setPlayerLoggedOut(key);
             }
         }
-        File file = new File(getDataFolder(), "playtime.json");
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdirs();
-        }
-        getLogman().info("Saving data to playtime.json");
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            fw = new FileWriter(file);
-            bw = new BufferedWriter(fw);
-            bw.write(GSON.toJson(this.timePlayed));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (bw != null) {
-                bw.close();
-            }
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        
+        PlayTimeDataAccess[] da = new PlayTimeDataAccess[this.timePlayed.size()];
+        int i = 0;
+        for(Entry<String, Integer> e : this.timePlayed.entrySet()) {
+            da[i].uuid = e.getKey();
+            da[i].playtime = e.getValue();
+        	
+            HashMap<String, Object> filter = new HashMap<String, Object>();
+            filter.put("uuid", e.getKey());
+            filter.put("playtime", e.getValue());
+            
+            try {
+                Database.get().update(da[i], filter);
+            } catch (DatabaseWriteException e1) { }
+            i++;
         }
     }
 
