@@ -12,15 +12,21 @@ import net.canarymod.chat.TextFormat;
 import net.canarymod.hook.HookHandler;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.DisconnectionHook;
+import net.canarymod.hook.system.ServerShutdownHook;
 import net.canarymod.plugin.PluginListener;
 import unomodding.minecraft.playtimelimiter.utils.FileUtils;
 import unomodding.minecraft.playtimelimiter.utils.Timestamper;
 
-public class PlayerListener implements PluginListener {
+public class PlayTimeListener implements PluginListener {
     private final PlayTimeLimiter plugin;
 
-    public PlayerListener(PlayTimeLimiter instance) {
+    public PlayTimeListener(PlayTimeLimiter instance) {
         this.plugin = instance;
+    }
+    
+    @HookHandler
+    public void onSeverShutdown(ServerShutdownHook hook) {
+    	this.plugin.savePlayTime(true); // Force save playtime when server is shut down
     }
 
     @HookHandler

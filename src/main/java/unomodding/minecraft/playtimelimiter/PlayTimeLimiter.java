@@ -24,8 +24,6 @@ import net.canarymod.plugin.Plugin;
 import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
 import unomodding.minecraft.playtimelimiter.threads.PlayTimeCheckerTask;
 import unomodding.minecraft.playtimelimiter.threads.PlayTimeSaverTask;
-import unomodding.minecraft.playtimelimiter.threads.ShutdownThread;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -34,7 +32,6 @@ public final class PlayTimeLimiter extends Plugin {
     private Map<String, Integer> timeLoggedIn = new HashMap<String, Integer>();
     private Map<String, Boolean> seenWarningMessages = new HashMap<String, Boolean>();
 
-    private boolean shutdownHookAdded = false;
     private Timer savePlayTimeTimer = null;
     private Timer checkPlayTimeTimer = null;
     private boolean started = false;
@@ -47,14 +44,6 @@ public final class PlayTimeLimiter extends Plugin {
 
     public boolean enable() {
     	instance = this;
-        if (!this.shutdownHookAdded) {
-            this.shutdownHookAdded = true;
-            try {
-                Runtime.getRuntime().addShutdownHook(new ShutdownThread(this));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
         if(!getConfig().containsKey("timeStarted")) {
         	getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
@@ -90,7 +79,7 @@ public final class PlayTimeLimiter extends Plugin {
         this.loadPlayTime();
         
         // Enable Listener
-     	Canary.hooks().registerListener(new PlayerListener(this), this);
+     	Canary.hooks().registerListener(new PlayTimeListener(this), this);
      		
      	// Enable Commands
      	try {
