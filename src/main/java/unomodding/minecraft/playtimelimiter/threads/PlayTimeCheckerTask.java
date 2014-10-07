@@ -26,7 +26,7 @@ public class PlayTimeCheckerTask extends TimerTask {
     @Override
     public void run() {
         for (Player player : Canary.getServer().getPlayerList()) {
-            int timeLeft = this.plugin.getTimeAllowedInSeconds(player.getName());
+            int timeLeft = this.plugin.getTimeAllowedInSeconds(player.getUUIDString());
             if (timeLeft <= 0) {
                 FileUtils.appendStringToFile(
                         new File(this.plugin.getDataFolder(), "playtime.log"),
@@ -35,26 +35,26 @@ public class PlayTimeCheckerTask extends TimerTask {
                 player.kick("You have exceeded the time allowed to play! Come back in "
                         + this.plugin.secondsToDaysHoursSecondsString(this.plugin
                                 .secondsUntilNextDay()) + "!");
-            } else if (timeLeft <= 10 && !this.plugin.hasPlayerSeenMessage(player.getName(), 10)) {
+            } else if (timeLeft <= 10 && !this.plugin.hasPlayerSeenMessage(player.getUUIDString(), 10)) {
                 player.message(TextFormat.RED
                         + "WARNING!"
                         + TextFormat.RESET
                         + " You have less than 10 seconds of playtime left! Stop what your doing and prepare to be disconnected!");
-                this.plugin.sentPlayerWarningMessage(player.getName(), 10);
+                this.plugin.sentPlayerWarningMessage(player.getUUIDString(), 10);
             } else if (timeLeft <= 60 && timeLeft > 10
-                    && !this.plugin.hasPlayerSeenMessage(player.getName(), 60)) {
+                    && !this.plugin.hasPlayerSeenMessage(player.getUUIDString(), 60)) {
                 player.message(TextFormat.RED
                         + "WARNING!"
                         + TextFormat.RESET
                         + " You have less than 60 seconds of playtime left! Stop what your doing and prepare to be disconnected!");
-                this.plugin.sentPlayerWarningMessage(player.getName(), 60);
+                this.plugin.sentPlayerWarningMessage(player.getUUIDString(), 60);
             } else if (timeLeft <= 300 && timeLeft > 60
-                    && !this.plugin.hasPlayerSeenMessage(player.getName(), 300)) {
+                    && !this.plugin.hasPlayerSeenMessage(player.getUUIDString(), 300)) {
                 player.message(TextFormat.RED
                         + "WARNING!"
                         + TextFormat.RESET
                         + " You have less than 5 minutes of playtime left! Stop what your doing and prepare to be disconnected!");
-                this.plugin.sentPlayerWarningMessage(player.getName(), 300);
+                this.plugin.sentPlayerWarningMessage(player.getUUIDString(), 300);
             }
         }
     }

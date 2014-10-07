@@ -65,7 +65,7 @@ public class PlayTimeCommands implements CommandListener {
                             + "You don't have permission to add remove from a players playtime!");
                 } else {
                     try {
-                        plugin.addPlayTime(args[1], Integer.parseInt(args[2]));
+                        plugin.addPlayTime(Canary.getServer().getPlayer(args[1]).getUUIDString(), Integer.parseInt(args[2]));
                         caller.message(TextFormat.GREEN + "Removed " + Integer.parseInt(args[2])
                                 + " seconds of playtime to " + args[1]);
                     } catch (NumberFormatException e) {
@@ -84,7 +84,7 @@ public class PlayTimeCommands implements CommandListener {
                             + "You don't have permission to add time to a players playtime!");
                 } else {
                     try {
-                        plugin.removePlayTime(args[1], Integer.parseInt(args[2]));
+                        plugin.removePlayTime(Canary.getServer().getPlayer(args[1]).getUUIDString(), Integer.parseInt(args[2]));
                         caller.message(TextFormat.GREEN + "Added " + Integer.parseInt(args[2])
                                 + " seconds of playtime from " + args[1]);
                     } catch (NumberFormatException e) {
@@ -108,10 +108,10 @@ public class PlayTimeCommands implements CommandListener {
                         caller.message(TextFormat.GREEN
                                 + "You have played for "
                                 + plugin.secondsToDaysHoursSecondsString(plugin
-                                        .getPlayerPlayTime(caller.getName()))
+                                        .getPlayerPlayTime(Canary.getServer().getPlayer(caller.getName()).getUUIDString()))
                                 + " and have "
                                 + plugin.secondsToDaysHoursSecondsString(plugin
-                                        .getTimeAllowedInSeconds(caller.getName())) + " remaining!");
+                                        .getTimeAllowedInSeconds(Canary.getServer().getPlayer(caller.getName()).getUUIDString() + " remaining!")));
                     }
                     return;
                 } else if (args.length == 2) {
@@ -120,13 +120,13 @@ public class PlayTimeCommands implements CommandListener {
                                 + "You don't have permission to check other players playtime!");
                     } else {
                         caller.message(TextFormat.GREEN
-                                + args[1]
+                                + Canary.getServer().getPlayer(args[1]).getName()
                                 + " has played for "
                                 + plugin.secondsToDaysHoursSecondsString(plugin
-                                        .getPlayerPlayTime(args[1]))
+                                        .getPlayerPlayTime(Canary.getServer().getPlayer(args[1]).getUUIDString()))
                                 + " and has "
                                 + plugin.secondsToDaysHoursSecondsString(plugin
-                                        .getTimeAllowedInSeconds(args[1])) + " remaining!");
+                                        .getTimeAllowedInSeconds(Canary.getServer().getPlayer(args[1]).getUUIDString())) + " remaining!");
                     }
                     return;
                 }

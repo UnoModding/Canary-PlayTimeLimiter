@@ -149,88 +149,88 @@ public final class PlayTimeLimiter extends Plugin {
         return secondsAllowed;
     }
 
-    public int getTimeAllowedInSeconds(String player) {
+    public int getTimeAllowedInSeconds(String uuid) {
         int secondsAllowed = this.getTimeAllowedInSeconds();
 
         // Remove the amount of time the player has played to get their time allowed
-        secondsAllowed -= getPlayerPlayTime(player);
+        secondsAllowed -= getPlayerPlayTime(uuid);
 
         return secondsAllowed;
     }
 
-    public void addPlayTime(String player, int seconds) {
-        if (this.timePlayed.containsKey(player)) {
-            this.timePlayed.put(player, this.timePlayed.get(player) + seconds);
+    public void addPlayTime(String uuid, int seconds) {
+        if (this.timePlayed.containsKey(uuid)) {
+            this.timePlayed.put(uuid, this.timePlayed.get(uuid) + seconds);
         } else {
-            this.timePlayed.put(player, seconds);
+            this.timePlayed.put(uuid, seconds);
         }
     }
 
-    public void removePlayTime(String player, int seconds) throws UnknownPlayerException {
-        if (this.timePlayed.containsKey(player)) {
-            this.timePlayed.put(player, this.timePlayed.get(player) - seconds);
+    public void removePlayTime(String uuid, int seconds) throws UnknownPlayerException {
+        if (this.timePlayed.containsKey(uuid)) {
+            this.timePlayed.put(uuid, this.timePlayed.get(uuid) - seconds);
         } else {
-            throw new UnknownPlayerException(player);
+            throw new UnknownPlayerException(uuid);
         }
     }
 
-    public int getPlayerPlayTime(String player) {
+    public int getPlayerPlayTime(String uuid) {
         int timePlayed = 0;
-        if (this.timePlayed.containsKey(player)) {
-            timePlayed += this.timePlayed.get(player);
+        if (this.timePlayed.containsKey(uuid)) {
+            timePlayed += this.timePlayed.get(uuid);
         }
-        if (this.timeLoggedIn.containsKey(player)) {
+        if (this.timeLoggedIn.containsKey(uuid)) {
             timePlayed += (int) ((System.currentTimeMillis() / 1000) - this.timeLoggedIn
-                    .get(player));
+                    .get(uuid));
         }
         return timePlayed;
     }
 
-    public void setPlayerLoggedIn(String player) {
-        if (!this.timePlayed.containsKey(player)) {
-            this.timePlayed.put(player, 0);
+    public void setPlayerLoggedIn(String uuid) {
+        if (!this.timePlayed.containsKey(uuid)) {
+            this.timePlayed.put(uuid, 0);
             this.savePlayTime();
         }
-        this.timeLoggedIn.put(player, (int) (System.currentTimeMillis() / 1000));
+        this.timeLoggedIn.put(uuid, (int) (System.currentTimeMillis() / 1000));
     }
 
-    public void setPlayerLoggedOut(String player) {
-        if (this.timeLoggedIn.containsKey(player)) {
+    public void setPlayerLoggedOut(String uuid) {
+        if (this.timeLoggedIn.containsKey(uuid)) {
             int timePlayed = (int) ((System.currentTimeMillis() / 1000) - this.timeLoggedIn
-                    .get(player));
-            if (this.timePlayed.containsKey(player)) {
-                timePlayed += this.timePlayed.get(player);
+                    .get(uuid));
+            if (this.timePlayed.containsKey(uuid)) {
+                timePlayed += this.timePlayed.get(uuid);
             }
             if (timePlayed > this.getTimeAllowedInSeconds()) {
                 timePlayed = this.getTimeAllowedInSeconds();
             }
-            this.timePlayed.put(player, timePlayed);
-            this.timeLoggedIn.remove(player);
+            this.timePlayed.put(uuid, timePlayed);
+            this.timeLoggedIn.remove(uuid);
             getLogman().info(
-                    "Player " + player + " played for a total of " + timePlayed + " seconds!");
+                    "Player " + Canary.getServer().getPlayerFromUUID(uuid).getName() + " played for a total of " + timePlayed + " seconds!");
             this.savePlayTime();
         }
-        if (this.seenWarningMessages.containsKey(player + ":10")) {
-            this.seenWarningMessages.remove(player + ":10");
+        if (this.seenWarningMessages.containsKey(uuid + ":10")) {
+            this.seenWarningMessages.remove(uuid + ":10");
         }
-        if (this.seenWarningMessages.containsKey(player + ":60")) {
-            this.seenWarningMessages.remove(player + ":60");
+        if (this.seenWarningMessages.containsKey(uuid + ":60")) {
+            this.seenWarningMessages.remove(uuid + ":60");
         }
-        if (this.seenWarningMessages.containsKey(player + ":300")) {
-            this.seenWarningMessages.remove(player + ":300");
+        if (this.seenWarningMessages.containsKey(uuid + ":300")) {
+            this.seenWarningMessages.remove(uuid + ":300");
         }
     }
 
-    public boolean hasPlayerSeenMessage(String player, int time) {
-        if (this.seenWarningMessages.containsKey(player + ":" + time)) {
-            return this.seenWarningMessages.get(player + ":" + time);
+    public boolean hasPlayerSeenMessage(String uuid, int time) {
+        if (this.seenWarningMessages.containsKey(uuid + ":" + time)) {
+            return this.seenWarningMessages.get(uuid + ":" + time);
         } else {
             return false;
         }
     }
 
-    public void sentPlayerWarningMessage(String player, int time) {
-        this.seenWarningMessages.put(player + ":" + time, true);
+    public void sentPlayerWarningMessage(String uuid, int time) {
+        this.seenWarningMessages.put(uuid + ":" + time, true);
     }
 
     public boolean start() {
