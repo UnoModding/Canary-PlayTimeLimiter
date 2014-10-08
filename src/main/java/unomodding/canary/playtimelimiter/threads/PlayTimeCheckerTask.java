@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package unomodding.minecraft.playtimelimiter.threads;
+package unomodding.canary.playtimelimiter.threads;
 
 import java.io.File;
 import java.util.TimerTask;
@@ -12,9 +12,9 @@ import java.util.TimerTask;
 import net.canarymod.Canary;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.chat.TextFormat;
-import unomodding.minecraft.playtimelimiter.PlayTimeLimiter;
-import unomodding.minecraft.playtimelimiter.utils.FileUtils;
-import unomodding.minecraft.playtimelimiter.utils.Timestamper;
+import unomodding.canary.playtimelimiter.PlayTimeLimiter;
+import unomodding.canary.playtimelimiter.utils.FileUtils;
+import unomodding.canary.playtimelimiter.utils.Timestamper;
 
 public class PlayTimeCheckerTask extends TimerTask {
     private final PlayTimeLimiter plugin;

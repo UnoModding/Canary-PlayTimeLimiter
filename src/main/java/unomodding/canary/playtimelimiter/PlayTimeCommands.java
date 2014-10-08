@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package unomodding.minecraft.playtimelimiter;
+package unomodding.canary.playtimelimiter;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
 import net.canarymod.commandsys.TabComplete;
 import net.canarymod.commandsys.TabCompleteHelper;
-import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
+import unomodding.canary.playtimelimiter.exceptions.UnknownPlayerException;
 
 public class PlayTimeCommands implements CommandListener {
     private final PlayTimeLimiter plugin;

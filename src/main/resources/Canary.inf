@@ -1,4 +1,4 @@
 name=PlayTimeLimiter
-main-class=unomodding.minecraft.playtimelimiter.PlayTimeLimiter
+main-class=unomodding.canary.playtimelimiter.PlayTimeLimiter
 author=UnoModding
 version=0.1

@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package unomodding.minecraft.playtimelimiter;
+package unomodding.canary.playtimelimiter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,10 +20,10 @@ import net.canarymod.Canary;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.CommandDependencyException;
 import net.canarymod.plugin.Plugin;
+import unomodding.canary.playtimelimiter.exceptions.UnknownPlayerException;
+import unomodding.canary.playtimelimiter.threads.PlayTimeCheckerTask;
+import unomodding.canary.playtimelimiter.threads.PlayTimeSaverTask;
 
-import unomodding.minecraft.playtimelimiter.exceptions.UnknownPlayerException;
-import unomodding.minecraft.playtimelimiter.threads.PlayTimeCheckerTask;
-import unomodding.minecraft.playtimelimiter.threads.PlayTimeSaverTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

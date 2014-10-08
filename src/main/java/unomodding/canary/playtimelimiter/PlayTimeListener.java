@@ -4,7 +4,7 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package unomodding.minecraft.playtimelimiter;
+package unomodding.canary.playtimelimiter;
 
 import java.io.File;
 
@@ -14,8 +14,8 @@ import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.DisconnectionHook;
 import net.canarymod.hook.system.ServerShutdownHook;
 import net.canarymod.plugin.PluginListener;
-import unomodding.minecraft.playtimelimiter.utils.FileUtils;
-import unomodding.minecraft.playtimelimiter.utils.Timestamper;
+import unomodding.canary.playtimelimiter.utils.FileUtils;
+import unomodding.canary.playtimelimiter.utils.Timestamper;
 
 public class PlayTimeListener implements PluginListener {
     private final PlayTimeLimiter plugin;

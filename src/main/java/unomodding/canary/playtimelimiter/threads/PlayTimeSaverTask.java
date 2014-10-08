@@ -4,11 +4,11 @@
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
  */
-package unomodding.minecraft.playtimelimiter.threads;
+package unomodding.canary.playtimelimiter.threads;
 
 import java.util.TimerTask;
 
-import unomodding.minecraft.playtimelimiter.PlayTimeLimiter;
+import unomodding.canary.playtimelimiter.PlayTimeLimiter;
 
 public class PlayTimeSaverTask extends TimerTask {
     private final PlayTimeLimiter plugin;
