@@ -36,17 +36,14 @@ public final class PlayTimeLimiter extends Plugin {
     private Timer checkPlayTimeTimer = null;
     private boolean started = false;
     private final Gson GSON = new Gson();
-	private static PlayTimeLimiter instance;
 
     public void disable() {
         this.savePlayTime(); // Save the playtime to file on plugin disable
     }
 
     public boolean enable() {
-    	instance = this;
-
-        if(!getConfig().containsKey("timeStarted")) {
-        	getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
+        if (!getConfig().containsKey("timeStarted")) {
+            getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
         }
         this.started = true;
 
@@ -71,18 +68,20 @@ public final class PlayTimeLimiter extends Plugin {
         }
 
         getLogman()
-                .info(String.format("Server started at %s which was %s seconds ago!", getConfig()
-                        .getInt("timeStarted"), this.secondsToDaysHoursSecondsString((int) ((System
-                        .currentTimeMillis() / 1000) - getConfig().getInt("timeStarted")))));
+                .info(String.format(
+                        "Server started at %s which was %s seconds ago!",
+                        getConfig().getInt("timeStarted"),
+                        this.secondsToDaysHoursSecondsString((int) ((System.currentTimeMillis() / 1000) - getConfig()
+                                .getInt("timeStarted")))));
 
         // Load the playtime from file
         this.loadPlayTime();
-        
+
         // Enable Listener
-     	Canary.hooks().registerListener(new PlayTimeListener(this), this);
-     		
-     	// Enable Commands
-     	try {
+        Canary.hooks().registerListener(new PlayTimeListener(this), this);
+
+        // Enable Commands
+        try {
             Canary.commands().registerCommands(new PlayTimeCommands(this), this, false);
         } catch (CommandDependencyException e) {
             e.printStackTrace();
@@ -90,14 +89,14 @@ public final class PlayTimeLimiter extends Plugin {
 
         if (savePlayTimeTimer == null) {
             this.savePlayTimeTimer = new Timer();
-            this.savePlayTimeTimer.scheduleAtFixedRate(new PlayTimeSaverTask(this), 30000,
-                    getConfig().getInt("secondsBetweenPlayTimeSaving") * 1000);
+            this.savePlayTimeTimer.scheduleAtFixedRate(new PlayTimeSaverTask(this), 30000, getConfig()
+                    .getInt("secondsBetweenPlayTimeSaving") * 1000);
         }
 
         if (checkPlayTimeTimer == null) {
             this.checkPlayTimeTimer = new Timer();
-            this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000,
-                    getConfig().getInt("secondsBetweenPlayTimeChecks") * 1000);
+            this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000, getConfig()
+                    .getInt("secondsBetweenPlayTimeChecks") * 1000);
         }
         return true;
     }
@@ -128,7 +127,8 @@ public final class PlayTimeLimiter extends Plugin {
         // Add the initial time we give the player at the beginning
         secondsAllowed += getConfig().getInt("initialTime");
 
-        // Then for each day including the first day (24 hours realtime) add the set amount of
+        // Then for each day including the first day (24 hours realtime) add the
+        // set amount of
         // seconds to the time allowed
         while (secondsSince >= 0) {
             secondsAllowed += getConfig().getInt("timePerDay");
@@ -141,7 +141,8 @@ public final class PlayTimeLimiter extends Plugin {
     public int getTimeAllowedInSeconds(String uuid) {
         int secondsAllowed = this.getTimeAllowedInSeconds();
 
-        // Remove the amount of time the player has played to get their time allowed
+        // Remove the amount of time the player has played to get their time
+        // allowed
         secondsAllowed -= getPlayerPlayTime(uuid);
 
         return secondsAllowed;
@@ -169,8 +170,7 @@ public final class PlayTimeLimiter extends Plugin {
             timePlayed += this.timePlayed.get(uuid);
         }
         if (this.timeLoggedIn.containsKey(uuid)) {
-            timePlayed += (int) ((System.currentTimeMillis() / 1000) - this.timeLoggedIn
-                    .get(uuid));
+            timePlayed += (int) ((System.currentTimeMillis() / 1000) - this.timeLoggedIn.get(uuid));
         }
         return timePlayed;
     }
@@ -185,8 +185,7 @@ public final class PlayTimeLimiter extends Plugin {
 
     public void setPlayerLoggedOut(String uuid) {
         if (this.timeLoggedIn.containsKey(uuid)) {
-            int timePlayed = (int) ((System.currentTimeMillis() / 1000) - this.timeLoggedIn
-                    .get(uuid));
+            int timePlayed = (int) ((System.currentTimeMillis() / 1000) - this.timeLoggedIn.get(uuid));
             if (this.timePlayed.containsKey(uuid)) {
                 timePlayed += this.timePlayed.get(uuid);
             }
@@ -196,7 +195,8 @@ public final class PlayTimeLimiter extends Plugin {
             this.timePlayed.put(uuid, timePlayed);
             this.timeLoggedIn.remove(uuid);
             getLogman().info(
-                    "Player " + Canary.getServer().getPlayerFromUUID(uuid).getName() + " played for a total of " + timePlayed + " seconds!");
+                    "Player " + Canary.getServer().getPlayerFromUUID(uuid).getName()
+                            + " played for a total of " + timePlayed + " seconds!");
             this.savePlayTime();
         }
         if (this.seenWarningMessages.containsKey(uuid + ":10")) {
@@ -238,9 +238,9 @@ public final class PlayTimeLimiter extends Plugin {
             return true;
         }
     }
-    
+
     public boolean stop() {
-    	if (!this.started) {
+        if (!this.started) {
             return false;
         } else {
             this.started = false;
@@ -322,11 +322,7 @@ public final class PlayTimeLimiter extends Plugin {
         }
     }
 
-	public File getDataFolder() {
-		return new File(Canary.getWorkingPath() + "/config/PlayTimeLimiter");
-	}
-	
-	public static PlayTimeLimiter getInstance() {
-		return instance;
-	}
+    public File getDataFolder() {
+        return new File(Canary.getWorkingPath() + "/config/PlayTimeLimiter");
+    }
 }

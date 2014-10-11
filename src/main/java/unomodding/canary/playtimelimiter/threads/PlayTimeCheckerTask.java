@@ -30,11 +30,11 @@ public class PlayTimeCheckerTask extends TimerTask {
             if (timeLeft <= 0) {
                 FileUtils.appendStringToFile(
                         new File(this.plugin.getDataFolder(), "playtime.log"),
-                        String.format("[%s] %s was kicked for exceeding play time",
-                                Timestamper.now(), player.getName()));
+                        String.format("[%s] %s was kicked for exceeding play time", Timestamper.now(),
+                                player.getName()));
                 player.kick("You have exceeded the time allowed to play! Come back in "
-                        + this.plugin.secondsToDaysHoursSecondsString(this.plugin
-                                .secondsUntilNextDay()) + "!");
+                        + this.plugin.secondsToDaysHoursSecondsString(this.plugin.secondsUntilNextDay())
+                        + "!");
             } else if (timeLeft <= 10 && !this.plugin.hasPlayerSeenMessage(player.getUUIDString(), 10)) {
                 player.message(TextFormat.RED
                         + "WARNING!"

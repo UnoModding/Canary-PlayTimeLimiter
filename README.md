@@ -3,7 +3,7 @@ PlayTimeLimiter
 
 ### What is it?
 
-PlayTimeLimiter is a Canary plugin for Minecraft to only allow players to play for a certain amount of time on a server
+PlayTimeLimiter is a CanaryMod plugin for Minecraft servers to only allow players to play for a certain amount of time on a server in a day.
 
 ### Links
 
