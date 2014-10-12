@@ -148,19 +148,19 @@ public final class PlayTimeLimiter extends Plugin {
         return secondsAllowed;
     }
 
-    public void addPlayTime(String uuid, int seconds) {
-        if (this.timePlayed.containsKey(uuid)) {
-            this.timePlayed.put(uuid, this.timePlayed.get(uuid) + seconds);
-        } else {
-            this.timePlayed.put(uuid, seconds);
-        }
-    }
-
-    public void removePlayTime(String uuid, int seconds) throws UnknownPlayerException {
+    public void addPlayTime(String uuid, int seconds) throws UnknownPlayerException {
         if (this.timePlayed.containsKey(uuid)) {
             this.timePlayed.put(uuid, this.timePlayed.get(uuid) - seconds);
         } else {
             throw new UnknownPlayerException(uuid);
+        }
+    }
+
+    public void removePlayTime(String uuid, int seconds) {
+        if (this.timePlayed.containsKey(uuid)) {
+            this.timePlayed.put(uuid, this.timePlayed.get(uuid) + seconds);
+        } else {
+            this.timePlayed.put(uuid, seconds);
         }
     }
 

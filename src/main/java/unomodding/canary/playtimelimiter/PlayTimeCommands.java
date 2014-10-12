@@ -108,15 +108,15 @@ public class PlayTimeCommands implements CommandListener {
              parent = "playtime",
              description = "add subcommand",
              permissions = { "playtimelimiter.playtime.add" },
-             toolTip = "/playtime add [seconds]",
+             toolTip = "/playtime add <player> <seconds>",
              version = 2)
     public void addCommand(MessageReceiver caller, String[] args) {
         if (!plugin.hasStarted()) {
             caller.message(TextFormat.RED + "Playtime hasn't started yet!");
         } else {
             try {
-                plugin.removePlayTime(Canary.getServer().getPlayer(args[0]).getUUIDString(),
-                        Integer.parseInt(args[0]));
+                plugin.addPlayTime(Canary.getServer().getPlayer(args[0]).getUUIDString(),
+                        Integer.parseInt(args[1]));
                 caller.message(TextFormat.GREEN + "Added " + Integer.parseInt(args[1])
                         + " seconds of playtime from " + args[0]);
             } catch (NumberFormatException e) {
@@ -133,7 +133,7 @@ public class PlayTimeCommands implements CommandListener {
              parent = "playtime",
              description = "remove subcommand",
              permissions = { "playtimelimiter.playtime.remove" },
-             toolTip = "/playtime remove [seconds]",
+             toolTip = "/playtime remove <player> <seconds>",
              version = 2)
     public void removeCommand(MessageReceiver caller, String[] args) {
         if (!plugin.hasStarted()) {
@@ -147,9 +147,6 @@ public class PlayTimeCommands implements CommandListener {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 caller.message(TextFormat.RED + "Invalid number of seconds given!");
-            } catch (UnknownPlayerException e) {
-                e.printStackTrace();
-                caller.message(TextFormat.RED + e.getMessage());
             }
         }
     }
