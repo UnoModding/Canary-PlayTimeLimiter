@@ -142,7 +142,7 @@ public class PlayTimeCommands implements CommandListener {
             try {
                 plugin.removePlayTime(Canary.getServer().getPlayer(args[0]).getUUIDString(),
                         Integer.parseInt(args[1]));
-                caller.message(TextFormat.GREEN + "Added " + Integer.parseInt(args[1])
+                caller.message(TextFormat.GREEN + "Removed " + Integer.parseInt(args[1])
                         + " seconds of playtime from " + args[0]);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
