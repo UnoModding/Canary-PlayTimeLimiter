@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 by RyanTheAlmighty, UnoModding and Contributors
+ * Copyright 2014 by UnoModding, RyanTheAlmighty and Contributors
  *
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
@@ -8,6 +8,7 @@ package unomodding.canary.playtimelimiter;
 
 import java.io.File;
 
+import net.canarymod.chat.Colors;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.hook.HookHandler;
 import net.canarymod.hook.player.ConnectionHook;
@@ -47,7 +48,7 @@ public class PlayTimeListener implements PluginListener {
         }
         hook.getPlayer().message(
                 "You have "
-                        + TextFormat.GREEN
+                        + Colors.GREEN
                         + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(hook
                                 .getPlayer().getUUIDString())) + TextFormat.RESET + " of playtime left!");
     }

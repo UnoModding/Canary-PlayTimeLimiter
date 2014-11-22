@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 by RyanTheAlmighty, UnoModding and Contributors
+ * Copyright 2014 by UnoModding, RyanTheAlmighty and Contributors
  *
  * This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Timer;
 
 import net.canarymod.Canary;
-import net.canarymod.chat.TextFormat;
+import net.canarymod.chat.Colors;
 import net.canarymod.commandsys.CommandDependencyException;
 import net.canarymod.plugin.Plugin;
 import unomodding.canary.playtimelimiter.exceptions.UnknownPlayerException;
@@ -37,10 +37,12 @@ public final class PlayTimeLimiter extends Plugin {
     private boolean started = false;
     private final Gson GSON = new Gson();
 
+    @Override
     public void disable() {
         this.savePlayTime(); // Save the playtime to file on plugin disable
     }
 
+    @Override
     public boolean enable() {
         if (!getConfig().containsKey("timeStarted")) {
             getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
@@ -230,7 +232,7 @@ public final class PlayTimeLimiter extends Plugin {
             String initial = (getConfig().getInt("initialTime") / 60 / 60) + "";
             String perday = (getConfig().getInt("timePerDay") / 60 / 60) + "";
             Canary.getServer().broadcastMessage(
-                    TextFormat.GREEN + "Playtime has now started! You have " + initial
+                    Colors.GREEN + "Playtime has now started! You have " + initial
                             + " hour/s of playtime to start with and " + perday
                             + " hour/s of playtime added per day!");
             getConfig().setInt("timeStarted", (int) (System.currentTimeMillis() / 1000));
