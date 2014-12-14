@@ -78,23 +78,20 @@ public class PlayTimeCommands implements CommandListener {
                     caller.message(Colors.RED + "You don't have permission to check your playtime!");
                 } else {
                     Player player = Canary.getServer().getPlayer(caller.getName());
-                    caller.message(Colors.GREEN
-                            + "You have played for "
-                            + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player))
-                            + " and have "
-                            + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player)) + " remaining!");
+                    caller.message(Colors.GREEN + "You have played for "
+                            + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player)) + " and have "
+                            + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player))
+                            + " remaining!");
                 }
             } else if (args.length == 1) {
                 if (!caller.hasPermission("playtimelimiter.playtime.check.others")) {
                     caller.message(Colors.RED + "You don't have permission to check other players playtime!");
                 } else {
                     Player player = Canary.getServer().getPlayer(args[0]);
-                    caller.message(Colors.GREEN
-                            + player.getName()
-                            + " has played for "
-                            + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player))
-                            + " and has "
-                            + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player)) + " remaining!");
+                    caller.message(Colors.GREEN + player.getName() + " has played for "
+                            + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player)) + " and has "
+                            + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player))
+                            + " remaining!");
                 }
             }
         }
@@ -111,10 +108,9 @@ public class PlayTimeCommands implements CommandListener {
             caller.message(Colors.RED + "Playtime hasn't started yet!");
         } else {
             try {
-                plugin.addPlayTime(Canary.getServer().getPlayer(args[0]),
-                        Integer.parseInt(args[1]));
-                caller.message(Colors.GREEN + "Added " + Integer.parseInt(args[1])
-                        + " seconds of playtime from " + args[0]);
+                plugin.addPlayTime(Canary.getServer().getPlayer(args[0]), Integer.parseInt(args[1]));
+                caller.message(Colors.GREEN + "Added " + Integer.parseInt(args[1]) + " seconds of playtime from "
+                        + args[0]);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 caller.message(Colors.RED + "Invalid number of seconds given!");
@@ -136,10 +132,9 @@ public class PlayTimeCommands implements CommandListener {
             caller.message(Colors.RED + "Playtime hasn't started yet!");
         } else {
             try {
-                plugin.removePlayTime(Canary.getServer().getPlayer(args[0]),
-                        Integer.parseInt(args[1]));
-                caller.message(Colors.GREEN + "Removed " + Integer.parseInt(args[1])
-                        + " seconds of playtime from " + args[0]);
+                plugin.removePlayTime(Canary.getServer().getPlayer(args[0]), Integer.parseInt(args[1]));
+                caller.message(Colors.GREEN + "Removed " + Integer.parseInt(args[1]) + " seconds of playtime from "
+                        + args[0]);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 caller.message(Colors.RED + "Invalid number of seconds given!");
@@ -150,11 +145,9 @@ public class PlayTimeCommands implements CommandListener {
     @TabComplete(commands = { "playtime", "pt" })
     public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
         if (parameters.length == 1) {
-            return TabCompleteHelper.matchTo(parameters, new String[] { "start", "stop", "add", "remove",
-                    "check" });
+            return TabCompleteHelper.matchTo(parameters, new String[] { "start", "stop", "add", "remove", "check" });
         } else if (parameters.length == 2
-                && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1]
-                        .equals("check"))) {
+                && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1].equals("check"))) {
             return TabCompleteHelper.matchTo(parameters, Canary.getServer().getKnownPlayerNames());
         } else {
             return null;
@@ -164,12 +157,10 @@ public class PlayTimeCommands implements CommandListener {
     public void printUsage(MessageReceiver caller) {
         caller.message(Colors.YELLOW + "/playtime usage:");
         if (caller.hasPermission("playtimelimiter.playtime.start")) {
-            caller.message(Colors.CYAN + "/playtime start" + TextFormat.RESET
-                    + " - Start the playtime counter.");
+            caller.message(Colors.CYAN + "/playtime start" + TextFormat.RESET + " - Start the playtime counter.");
         }
         if (caller.hasPermission("playtimelimiter.playtime.stop")) {
-            caller.message(Colors.CYAN + "/playtime stop" + TextFormat.RESET
-                    + " - Stop the playtime counter.");
+            caller.message(Colors.CYAN + "/playtime stop" + TextFormat.RESET + " - Stop the playtime counter.");
         }
         if (caller.hasPermission("playtimelimiter.playtime.add")) {
             caller.message(Colors.CYAN + "/playtime add <user> <time>" + TextFormat.RESET

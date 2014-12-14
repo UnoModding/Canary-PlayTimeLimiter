@@ -27,30 +27,28 @@ public class PlayTimeListener implements PluginListener {
 
     @HookHandler
     public void onSeverShutdown(ServerShutdownHook hook) {
-        this.plugin.savePlayTime(true); // Force save playtime when server is
-                                        // shut down
+        this.plugin.savePlayTime(true); 
+        // Force save playtime when server is shut down
     }
 
     @HookHandler
     public void onPlayerJoin(ConnectionHook hook) {
+        this.plugin.loadPlayTime(hook.getPlayer());
         FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"),
                 String.format("[%s] %s logged in", Timestamper.now(), hook.getPlayer().getName()));
         if (this.plugin.getTimeAllowedInSeconds(hook.getPlayer()) <= 0) {
-            FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"), String
-                    .format("[%s] %s was kicked for exceeding play time", Timestamper.now(), hook.getPlayer()
-                            .getName()));
+            FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"), String.format(
+                    "[%s] %s was kicked for exceeding play time", Timestamper.now(), hook.getPlayer().getName()));
             hook.getPlayer().kick(
                     "You have exceeded the time allowed to play! Come back in "
-                            + this.plugin.secondsToDaysHoursSecondsString(this.plugin.secondsUntilNextDay())
-                            + "!");
+                            + this.plugin.secondsToDaysHoursSecondsString(this.plugin.secondsUntilNextDay()) + "!");
         } else {
             this.plugin.setPlayerLoggedIn(hook.getPlayer());
         }
         hook.getPlayer().message(
-                "You have "
-                        + Colors.GREEN
-                        + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(hook
-                                .getPlayer())) + TextFormat.RESET + " of playtime left!");
+                "You have " + Colors.GREEN
+                        + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(hook.getPlayer()))
+                        + TextFormat.RESET + " of playtime left!");
     }
 
     @HookHandler
