@@ -9,10 +9,10 @@ public class PlayTimeDataAccess extends DataAccess {
         super("playtime");
     }
 
-    @Column(columnName = "uuid", dataType = DataType.STRING)
+    @Column(columnName = "player_uuid", dataType = DataType.STRING)
     public String uuid;
 
-    @Column(columnName = "playtime", dataType = DataType.INTEGER)
+    @Column(columnName = "player_playtime", dataType = DataType.INTEGER)
     public int playtime;
 
     @Override

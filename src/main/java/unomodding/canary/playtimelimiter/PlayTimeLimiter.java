@@ -300,14 +300,12 @@ public final class PlayTimeLimiter extends Plugin {
         }
 
         for (String key : this.timePlayed.keySet()) {
-            Player player = Canary.getServer().getPlayerFromUUID(key);
-
             PlayTimeDataAccess dataAccess = new PlayTimeDataAccess();
             dataAccess.uuid = key;
             dataAccess.playtime = this.timePlayed.get(key);
 
             HashMap<String, Object> filter = new HashMap<String, Object>();
-            filter.put("player_uuid", player.getUUIDString());
+            filter.put("player_uuid", key);
 
             try {
                 Database.get().update(dataAccess, filter);
