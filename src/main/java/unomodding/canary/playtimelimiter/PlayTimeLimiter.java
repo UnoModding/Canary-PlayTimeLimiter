@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 
+import org.mcstats.Metrics;
+
 import net.canarymod.Canary;
 import net.canarymod.chat.Colors;
 import net.canarymod.commandsys.CommandDependencyException;
@@ -99,6 +101,14 @@ public final class PlayTimeLimiter extends Plugin {
             this.checkPlayTimeTimer = new Timer();
             this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000, getConfig()
                     .getInt("secondsBetweenPlayTimeChecks") * 1000);
+        }
+        
+        // Metrics
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            getLogman().info("Failed to send data to Metrics", e);
         }
         return true;
     }
