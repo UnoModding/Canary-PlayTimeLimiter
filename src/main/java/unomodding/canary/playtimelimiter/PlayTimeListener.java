@@ -35,7 +35,7 @@ public class PlayTimeListener implements PluginListener {
     public void onPlayerJoin(ConnectionHook hook) {
         FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"),
                 String.format("[%s] %s logged in", Timestamper.now(), hook.getPlayer().getName()));
-        if (this.plugin.getTimeAllowedInSeconds(hook.getPlayer().getUUIDString()) <= 0) {
+        if (this.plugin.getTimeAllowedInSeconds(hook.getPlayer()) <= 0) {
             FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"), String
                     .format("[%s] %s was kicked for exceeding play time", Timestamper.now(), hook.getPlayer()
                             .getName()));
@@ -44,19 +44,19 @@ public class PlayTimeListener implements PluginListener {
                             + this.plugin.secondsToDaysHoursSecondsString(this.plugin.secondsUntilNextDay())
                             + "!");
         } else {
-            this.plugin.setPlayerLoggedIn(hook.getPlayer().getUUIDString());
+            this.plugin.setPlayerLoggedIn(hook.getPlayer());
         }
         hook.getPlayer().message(
                 "You have "
                         + Colors.GREEN
                         + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(hook
-                                .getPlayer().getUUIDString())) + TextFormat.RESET + " of playtime left!");
+                                .getPlayer())) + TextFormat.RESET + " of playtime left!");
     }
 
     @HookHandler
     public void onPlayerQuit(DisconnectionHook hook) {
         FileUtils.appendStringToFile(new File(this.plugin.getDataFolder(), "playtime.log"),
                 String.format("[%s] %s logged out", Timestamper.now(), hook.getPlayer().getName()));
-        this.plugin.setPlayerLoggedOut(hook.getPlayer().getUUIDString());
+        this.plugin.setPlayerLoggedOut(hook.getPlayer());
     }
 }
