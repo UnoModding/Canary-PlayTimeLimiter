@@ -9,9 +9,10 @@ package unomodding.canary.playtimelimiter;
 import java.util.List;
 
 import net.canarymod.Canary;
-import net.canarymod.api.entity.living.humanoid.Player;
+import net.canarymod.api.OfflinePlayer;
 import net.canarymod.chat.Colors;
 import net.canarymod.chat.MessageReceiver;
+import net.canarymod.chat.ReceiverType;
 import net.canarymod.chat.TextFormat;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
@@ -77,17 +78,22 @@ public class PlayTimeCommands implements CommandListener {
                 if (!caller.hasPermission("playtimelimiter.playtime.check.self")) {
                     caller.message(Colors.RED + "You don't have permission to check your playtime!");
                 } else {
-                    Player player = Canary.getServer().getPlayer(caller.getName());
-                    caller.message(Colors.GREEN + "You have played for "
-                            + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player)) + " and have "
-                            + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player))
-                            + " remaining!");
+                    if(caller.getReceiverType() == ReceiverType.PLAYER) {
+                        OfflinePlayer player = Canary.getServer().getOfflinePlayer(caller.getName());
+                        plugin.loadPlayTime(player);
+                        caller.message(Colors.GREEN + "You have played for "
+                                + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player)) + " and have "
+                                + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player))
+                                + " remaining!");
+                    } else {
+                        caller.message(Colors.RED + "Only Players have playtime!");
+                    }
                 }
             } else if (args.length == 1) {
                 if (!caller.hasPermission("playtimelimiter.playtime.check.others")) {
                     caller.message(Colors.RED + "You don't have permission to check other players playtime!");
                 } else {
-                    Player player = Canary.getServer().getPlayer(args[0]);
+                    OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
                     caller.message(Colors.GREEN + player.getName() + " has played for "
                             + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player)) + " and has "
                             + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player))
@@ -108,7 +114,9 @@ public class PlayTimeCommands implements CommandListener {
             caller.message(Colors.RED + "Playtime hasn't started yet!");
         } else {
             try {
-                plugin.addPlayTime(Canary.getServer().getPlayer(args[0]), Integer.parseInt(args[1]));
+                OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
+                plugin.loadPlayTime(player);
+                plugin.addPlayTime(player, Integer.parseInt(args[1]));
                 caller.message(Colors.GREEN + "Added " + Integer.parseInt(args[1]) + " seconds of playtime from "
                         + args[0]);
             } catch (NumberFormatException e) {
@@ -132,7 +140,9 @@ public class PlayTimeCommands implements CommandListener {
             caller.message(Colors.RED + "Playtime hasn't started yet!");
         } else {
             try {
-                plugin.removePlayTime(Canary.getServer().getPlayer(args[0]), Integer.parseInt(args[1]));
+                OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
+                plugin.loadPlayTime(player);
+                plugin.removePlayTime(player, Integer.parseInt(args[1]));
                 caller.message(Colors.GREEN + "Removed " + Integer.parseInt(args[1]) + " seconds of playtime from "
                         + args[0]);
             } catch (NumberFormatException e) {
