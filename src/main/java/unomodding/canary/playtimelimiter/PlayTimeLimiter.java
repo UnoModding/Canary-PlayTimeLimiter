@@ -70,6 +70,11 @@ public final class PlayTimeLimiter extends Plugin {
             getConfig().setInt("secondsBetweenPlayTimeSaving", 600);
             getConfig().save();
         }
+        
+        if (!getConfig().containsKey("timeTravels")) {
+            getConfig().setBoolean("timeTravels", true);
+            getConfig().save();
+        }
 
         getLogman()
                 .info(String.format(
@@ -143,7 +148,11 @@ public final class PlayTimeLimiter extends Plugin {
         // set amount of
         // seconds to the time allowed
         while (secondsSince >= 0) {
-            secondsAllowed += getConfig().getInt("timePerDay");
+            if (getConfig().getBoolean("timeTravels")) {
+                secondsAllowed += getConfig().getInt("timePerDay");
+            } else {
+                secondsAllowed = getConfig().getInt("timePerDay");
+            }
             secondsSince -= 86400;
         }
 
