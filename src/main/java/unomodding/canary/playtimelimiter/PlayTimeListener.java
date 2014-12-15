@@ -27,7 +27,7 @@ public class PlayTimeListener implements PluginListener {
 
     @HookHandler
     public void onSeverShutdown(ServerShutdownHook hook) {
-        this.plugin.savePlayTime(true); 
+        this.plugin.savePlayTime(true);
         // Force save playtime when server is shut down
     }
 

@@ -78,11 +78,12 @@ public class PlayTimeCommands implements CommandListener {
                 if (!caller.hasPermission("playtimelimiter.playtime.check.self")) {
                     caller.message(Colors.RED + "You don't have permission to check your playtime!");
                 } else {
-                    if(caller.getReceiverType() == ReceiverType.PLAYER) {
+                    if (caller.getReceiverType() == ReceiverType.PLAYER) {
                         OfflinePlayer player = Canary.getServer().getOfflinePlayer(caller.getName());
                         plugin.loadPlayTime(player);
                         caller.message(Colors.GREEN + "You have played for "
-                                + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player)) + " and have "
+                                + plugin.secondsToDaysHoursSecondsString(plugin.getPlayerPlayTime(player))
+                                + " and have "
                                 + plugin.secondsToDaysHoursSecondsString(plugin.getTimeAllowedInSeconds(player))
                                 + " remaining!");
                     } else {

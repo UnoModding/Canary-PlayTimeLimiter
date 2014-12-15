@@ -7,6 +7,8 @@
 package unomodding.canary.playtimelimiter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,9 @@ import unomodding.canary.playtimelimiter.exceptions.UnknownPlayerException;
 import unomodding.canary.playtimelimiter.threads.PlayTimeCheckerTask;
 import unomodding.canary.playtimelimiter.threads.PlayTimeSaverTask;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 public final class PlayTimeLimiter extends Plugin {
     private Map<String, Integer> timePlayed = new HashMap<String, Integer>();
     private Map<String, Integer> timeLoggedIn = new HashMap<String, Integer>();
@@ -37,6 +42,7 @@ public final class PlayTimeLimiter extends Plugin {
     private Timer savePlayTimeTimer = null;
     private Timer checkPlayTimeTimer = null;
     private boolean started = false;
+    private final Gson GSON = new Gson();
 
     @Override
     public void disable() {
@@ -156,15 +162,16 @@ public final class PlayTimeLimiter extends Plugin {
     public int getTimeAllowedInSeconds(OfflinePlayer player) {
         return getTimeAllowedInSeconds(player.getUUIDString());
     }
-    
+
     public int getTimeAllowedInSeconds(Player player) {
         return getTimeAllowedInSeconds(player.getUUIDString());
     }
-    
+
     private int getTimeAllowedInSeconds(String uuid) {
         int secondsAllowed = this.getTimeAllowedInSeconds();
 
-        // Remove the amount of time the player has played to get their time allowed
+        // Remove the amount of time the player has played to get their time
+        // allowed
         secondsAllowed -= getPlayerPlayTime(uuid);
 
         return secondsAllowed;
@@ -218,11 +225,11 @@ public final class PlayTimeLimiter extends Plugin {
     }
 
     public void setPlayerLoggedOut(OfflinePlayer player) {
-        setPlayerLoggedOut(player.getUUIDString()); 
+        setPlayerLoggedOut(player.getUUIDString());
     }
 
     public void setPlayerLoggedOut(Player player) {
-        setPlayerLoggedOut(player.getUUIDString()); 
+        setPlayerLoggedOut(player.getUUIDString());
     }
 
     private void setPlayerLoggedOut(String uuid) {
@@ -237,8 +244,8 @@ public final class PlayTimeLimiter extends Plugin {
             this.timePlayed.put(uuid, timePlayed);
             this.timeLoggedIn.remove(uuid);
             getLogman().info(
-                    "Player " + Canary.getServer().getPlayerFromUUID(uuid).getName()
-                            + " played for a total of " + timePlayed + " seconds!");
+                    "Player " + Canary.getServer().getPlayerFromUUID(uuid).getName() + " played for a total of "
+                            + timePlayed + " seconds!");
             this.savePlayTime();
         }
         if (this.seenWarningMessages.containsKey(uuid + ":10")) {
@@ -249,7 +256,7 @@ public final class PlayTimeLimiter extends Plugin {
         }
         if (this.seenWarningMessages.containsKey(uuid + ":300")) {
             this.seenWarningMessages.remove(uuid + ":300");
-        } 
+        }
     }
 
     public boolean hasPlayerSeenMessage(OfflinePlayer player, int time) {
@@ -259,7 +266,7 @@ public final class PlayTimeLimiter extends Plugin {
     public boolean hasPlayerSeenMessage(Player player, int time) {
         return hasPlayerSeenMessage(player.getUUIDString(), time);
     }
-    
+
     private boolean hasPlayerSeenMessage(String uuid, int time) {
         if (this.seenWarningMessages.containsKey(uuid + ":" + time)) {
             return this.seenWarningMessages.get(uuid + ":" + time);
@@ -312,15 +319,40 @@ public final class PlayTimeLimiter extends Plugin {
     public void loadPlayTime(OfflinePlayer player) {
         loadPlayTime(player.getUUIDString());
     }
-    
+
     public void loadPlayTime(Player player) {
         loadPlayTime(player.getUUIDString());
     }
-    
+
     private void loadPlayTime(String uuid) {
         if (!hasStarted()) {
             return;
         }
+
+        // Old data file, code transfers old data over
+        File file = new File(getDataFolder(), "playtime.json");
+        if (!file.exists()) {
+            getLogman().debug("old data file doesn't exist, no data will be transfered over.");
+        } else {
+            if (!getDataFolder().exists()) {
+                getDataFolder().mkdirs();
+            }
+            getLogman().info("Loading data from playtime.json");
+            FileReader fileReader;
+            try {
+                fileReader = new FileReader(file);
+                java.lang.reflect.Type type = new TypeToken<Map<String, Integer>>() {
+                }.getType();
+                this.timePlayed = GSON.fromJson(fileReader, type);
+                fileReader.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            file.renameTo(new File(getDataFolder(), "oldplaytim.json"));
+        }
+
         PlayTimeDataAccess dataAccess = new PlayTimeDataAccess();
         try {
             HashMap<String, Object> filter = new HashMap<String, Object>();
