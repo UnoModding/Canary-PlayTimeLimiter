@@ -46,7 +46,8 @@ public final class PlayTimeLimiter extends Plugin {
 
     @Override
     public void disable() {
-        this.savePlayTime(); // Save the playtime to file on plugin disable
+        this.savePlayTime();
+        // Save the playtime to database on plugin disable
     }
 
     @Override
@@ -99,18 +100,18 @@ public final class PlayTimeLimiter extends Plugin {
             this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000,
                     getConfig().getInt("secondsBetweenPlayTimeChecks") * 1000);
         }
-        
+
         // Load any players that may be on at plugin enable
-        for(Player player : Canary.getServer().getPlayerList()) {
+        for (Player player : Canary.getServer().getPlayerList()) {
             loadPlayTime(player);
         }
-        
+
         // Load old data
         loadOldPlayTime();
 
         // Enable Listener
         Canary.hooks().registerListener(new PlayTimeListener(this), this);
-        
+
         // Metrics
         try {
             Metrics metrics = new Metrics(this);
@@ -194,6 +195,10 @@ public final class PlayTimeLimiter extends Plugin {
         } else {
             this.timePlayed.put(player.getUUIDString(), seconds);
         }
+    }
+
+    public void setPlayTime(OfflinePlayer player, int seconds) {
+        this.timePlayed.put(player.getUUIDString(), seconds);
     }
 
     public int getPlayerPlayTime(OfflinePlayer player) {
@@ -347,7 +352,7 @@ public final class PlayTimeLimiter extends Plugin {
             timePlayed.put(uuid, 0);
         }
     }
-    
+
     public void loadOldPlayTime() {
         // Old data file, code transfers old data over
         File file = new File(getDataFolder(), "playtime.json");
