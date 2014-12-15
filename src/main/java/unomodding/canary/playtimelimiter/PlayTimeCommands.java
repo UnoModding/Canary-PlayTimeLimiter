@@ -30,7 +30,7 @@ public class PlayTimeCommands implements CommandListener {
     @Command(aliases = { "playtime", "pt" },
              description = "playtime command",
              permissions = {},
-             toolTip = "/playtime <start|stop|add|remove|check> [parameters...]",
+             toolTip = "/playtime <start|stop|add|set|remove|check> [parameters...]",
              version = 2)
     public void baseCommand(MessageReceiver caller, String[] args) {
         printUsage(caller);
@@ -152,28 +152,28 @@ public class PlayTimeCommands implements CommandListener {
             }
         }
     }
-    
+
     @Command(aliases = { "set" },
-            parent = "playtime",
-            description = "set subcommand",
-            permissions = { "playtimelimiter.playtime.set" },
-            toolTip = "/playtime set <player> <seconds>",
-            version = 2)
-   public void setCommand(MessageReceiver caller, String[] args) {
-       if (!plugin.hasStarted()) {
-           caller.message(Colors.RED + "Playtime hasn't started yet!");
-       } else {
-           try {
-               OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
-               plugin.loadPlayTime(player);
-               plugin.setPlayTime(player, Integer.parseInt(args[1]));
-               caller.message(Colors.GREEN + "Set " + args[0] + "'s playtime to " + Integer.parseInt(args[1]));
-           } catch (NumberFormatException e) {
-               e.printStackTrace();
-               caller.message(Colors.RED + "Invalid number of seconds given!");
-           }
-       }
-   }
+             parent = "playtime",
+             description = "set subcommand",
+             permissions = { "playtimelimiter.playtime.set" },
+             toolTip = "/playtime set <player> <seconds>",
+             version = 2)
+    public void setCommand(MessageReceiver caller, String[] args) {
+        if (!plugin.hasStarted()) {
+            caller.message(Colors.RED + "Playtime hasn't started yet!");
+        } else {
+            try {
+                OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
+                plugin.loadPlayTime(player);
+                plugin.setPlayTime(player, Integer.parseInt(args[1]));
+                caller.message(Colors.GREEN + "Set " + args[0] + "'s playtime to " + Integer.parseInt(args[1]));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                caller.message(Colors.RED + "Invalid number of seconds given!");
+            }
+        }
+    }
 
     @TabComplete(commands = { "playtime", "pt" })
     public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
@@ -198,6 +198,10 @@ public class PlayTimeCommands implements CommandListener {
         if (caller.hasPermission("playtimelimiter.playtime.add")) {
             caller.message(Colors.CYAN + "/playtime add <user> <time>" + TextFormat.RESET
                     + " - Add time in seconds to the user's playtime.");
+        }
+        if (caller.hasPermission("playtimelimiter.playtime.set")) {
+            caller.message(Colors.CYAN + "/playtime add <user> <time>" + TextFormat.RESET
+                    + " - Set time in seconds to the user's playtime.");
         }
         if (caller.hasPermission("playtimelimiter.playtime.check.others")) {
             caller.message(Colors.CYAN + "/playtime check [user]" + TextFormat.RESET

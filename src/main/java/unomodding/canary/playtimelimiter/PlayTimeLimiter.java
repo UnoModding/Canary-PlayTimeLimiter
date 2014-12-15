@@ -70,7 +70,7 @@ public final class PlayTimeLimiter extends Plugin {
             getConfig().save();
         }
         if (!getConfig().containsKey("secondsBetweenPlayTimeSaving")) {
-            getConfig().setInt("secondsBetweenPlayTimeSaving", 600);
+            getConfig().setInt("secondsBetweenPlayTimeSaving", 900);
             getConfig().save();
         }
         if (!getConfig().containsKey("timeTravels")) {
