@@ -60,22 +60,18 @@ public final class PlayTimeLimiter extends Plugin {
             getConfig().setInt("initialTime", 28800);
             getConfig().save();
         }
-
         if (!getConfig().containsKey("timePerDay")) {
             getConfig().setInt("timePerDay", 3600);
             getConfig().save();
         }
-
         if (!getConfig().containsKey("secondsBetweenPlayTimeChecks")) {
             getConfig().setInt("secondsBetweenPlayTimeChecks", 10);
             getConfig().save();
         }
-
         if (!getConfig().containsKey("secondsBetweenPlayTimeSaving")) {
             getConfig().setInt("secondsBetweenPlayTimeSaving", 600);
             getConfig().save();
         }
-
         if (!getConfig().containsKey("timeTravels")) {
             getConfig().setBoolean("timeTravels", true);
             getConfig().save();
@@ -85,9 +81,6 @@ public final class PlayTimeLimiter extends Plugin {
                 String.format("Server started at %s which was %s seconds ago!", getConfig().getInt("timeStarted"), this
                         .secondsToDaysHoursSecondsString((int) ((System.currentTimeMillis() / 1000) - getConfig()
                                 .getInt("timeStarted")))));
-
-        // Enable Listener
-        Canary.hooks().registerListener(new PlayTimeListener(this), this);
 
         // Enable Commands
         try {
@@ -101,13 +94,23 @@ public final class PlayTimeLimiter extends Plugin {
             this.savePlayTimeTimer.scheduleAtFixedRate(new PlayTimeSaverTask(this), 30000,
                     getConfig().getInt("secondsBetweenPlayTimeSaving") * 1000);
         }
-
         if (checkPlayTimeTimer == null) {
             this.checkPlayTimeTimer = new Timer();
             this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000,
                     getConfig().getInt("secondsBetweenPlayTimeChecks") * 1000);
         }
+        
+        // Load any players that may be on at plugin enable
+        for(Player player : Canary.getServer().getPlayerList()) {
+            loadPlayTime(player);
+        }
+        
+        // Load old data
+        loadOldPlayTime();
 
+        // Enable Listener
+        Canary.hooks().registerListener(new PlayTimeListener(this), this);
+        
         // Metrics
         try {
             Metrics metrics = new Metrics(this);
@@ -329,6 +332,23 @@ public final class PlayTimeLimiter extends Plugin {
             return;
         }
 
+        PlayTimeDataAccess dataAccess = new PlayTimeDataAccess();
+        try {
+            HashMap<String, Object> filter = new HashMap<String, Object>();
+            filter.put("player_uuid", uuid);
+
+            Database.get().load(dataAccess, filter);
+        } catch (DatabaseReadException e) {
+            getLogman().warn("Failed to read from database", e);
+        }
+        if (dataAccess.hasData()) {
+            timePlayed.put(dataAccess.uuid, dataAccess.playtime);
+        } else {
+            timePlayed.put(uuid, 0);
+        }
+    }
+    
+    public void loadOldPlayTime() {
         // Old data file, code transfers old data over
         File file = new File(getDataFolder(), "playtime.json");
         if (!file.exists()) {
@@ -350,22 +370,7 @@ public final class PlayTimeLimiter extends Plugin {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            file.renameTo(new File(getDataFolder(), "oldplaytim.json"));
-        }
-
-        PlayTimeDataAccess dataAccess = new PlayTimeDataAccess();
-        try {
-            HashMap<String, Object> filter = new HashMap<String, Object>();
-            filter.put("player_uuid", uuid);
-
-            Database.get().load(dataAccess, filter);
-        } catch (DatabaseReadException e) {
-            getLogman().warn("Failed to read from database", e);
-        }
-        if (dataAccess.hasData()) {
-            timePlayed.put(dataAccess.uuid, dataAccess.playtime);
-        } else {
-            timePlayed.put(uuid, 0);
+            file.renameTo(new File(getDataFolder(), "oldplaytime.json"));
         }
     }
 
