@@ -188,7 +188,7 @@ public class PlayTimeCommand implements CommandListener {
     @Command(aliases = { "add" },
              parent = "blacklist",
              description = "add blacklist subcommand",
-             permissions = { "playtimelimiter.playtime.add" },
+             permissions = { "playtimelimiter.playtime.blacklist.add" },
              toolTip = "/playtime blacklist add <player>",
              version = 2)
     public void blacklistAddCommand(MessageReceiver caller, String[] args) {
@@ -204,7 +204,7 @@ public class PlayTimeCommand implements CommandListener {
     @Command(aliases = { "remove" },
              parent = "blacklist",
              description = "remove blacklist subcommand",
-             permissions = { "playtimelimiter.playtime.remove" },
+             permissions = { "playtimelimiter.playtime.blacklist.remove" },
              toolTip = "/playtime blacklist remove <player>",
              version = 2)
     public void blacklistRemoveCommand(MessageReceiver caller, String[] args) {
