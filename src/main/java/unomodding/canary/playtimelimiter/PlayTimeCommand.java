@@ -20,10 +20,10 @@ import net.canarymod.commandsys.TabComplete;
 import net.canarymod.commandsys.TabCompleteHelper;
 import unomodding.canary.playtimelimiter.exceptions.UnknownPlayerException;
 
-public class PlayTimeCommands implements CommandListener {
+public class PlayTimeCommand implements CommandListener {
     private final PlayTimeLimiter plugin;
 
-    public PlayTimeCommands(PlayTimeLimiter plugin) {
+    public PlayTimeCommand(PlayTimeLimiter plugin) {
         this.plugin = plugin;
     }
 
@@ -175,10 +175,53 @@ public class PlayTimeCommands implements CommandListener {
         }
     }
 
+    @Command(aliases = { "blacklist" },
+             parent = "playtime",
+             description = "blacklist subcommand",
+             permissions = {},
+             toolTip = "/playtime blacklist <add|remove> <player>",
+             version = 2)
+    public void blacklistCommand(MessageReceiver caller, String[] args) {
+        printUsage(caller);
+    }
+
+    @Command(aliases = { "add" },
+             parent = "blacklist",
+             description = "add blacklist subcommand",
+             permissions = { "playtimelimiter.playtime.add" },
+             toolTip = "/playtime blacklist add <player>",
+             version = 2)
+    public void blacklistAddCommand(MessageReceiver caller, String[] args) {
+        OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
+        if (!plugin.hasPlayTime(player)) {
+            plugin.addToPlayTimeBlacklist(player, true);
+            caller.message("Added " + args[0] + " to the playtime blacklist.");
+        } else {
+            caller.message(args[0] + " is already on the playtime blacklist.");
+        }
+    }
+
+    @Command(aliases = { "remove" },
+             parent = "blacklist",
+             description = "remove blacklist subcommand",
+             permissions = { "playtimelimiter.playtime.remove" },
+             toolTip = "/playtime blacklist remove <player>",
+             version = 2)
+    public void blacklistRemoveCommand(MessageReceiver caller, String[] args) {
+        OfflinePlayer player = Canary.getServer().getOfflinePlayer(args[0]);
+        if (plugin.hasPlayTime(player)) {
+            plugin.addToPlayTimeBlacklist(player, false);
+            caller.message("Removed " + args[0] + " from the playtime blacklist.");
+        } else {
+            caller.message(args[0] + " wasn't part of the playtime blacklist.");
+        }
+    }
+
     @TabComplete(commands = { "playtime", "pt" })
     public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
         if (parameters.length == 1) {
-            return TabCompleteHelper.matchTo(parameters, new String[] { "start", "stop", "add", "remove", "check" });
+            return TabCompleteHelper.matchTo(parameters, new String[] { "start", "stop", "add", "remove", "check",
+                    "blacklist" });
         } else if (parameters.length == 2
                 && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1].equals("check"))) {
             return TabCompleteHelper.matchTo(parameters, Canary.getServer().getKnownPlayerNames());

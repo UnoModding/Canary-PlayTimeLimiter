@@ -26,6 +26,7 @@ import net.canarymod.plugin.Plugin;
 
 import org.mcstats.Metrics;
 
+import unomodding.canary.playtimelimiter.data.PlayTimeBlacklistAccess;
 import unomodding.canary.playtimelimiter.data.PlayTimeDataAccess;
 import unomodding.canary.playtimelimiter.exceptions.UnknownPlayerException;
 import unomodding.canary.playtimelimiter.threads.PlayTimeCheckerTask;
@@ -38,6 +39,7 @@ public final class PlayTimeLimiter extends Plugin {
     private Map<String, Integer> timePlayed = new HashMap<String, Integer>();
     private Map<String, Integer> timeLoggedIn = new HashMap<String, Integer>();
     private Map<String, Boolean> seenWarningMessages = new HashMap<String, Boolean>();
+    private Map<String, Boolean> blacklist = new HashMap<String, Boolean>();
 
     private Timer savePlayTimeTimer = null;
     private Timer checkPlayTimeTimer = null;
@@ -47,6 +49,7 @@ public final class PlayTimeLimiter extends Plugin {
     @Override
     public void disable() {
         this.savePlayTime();
+        this.saveBlacklist();
         // Save the playtime to database on plugin disable
     }
 
@@ -77,6 +80,10 @@ public final class PlayTimeLimiter extends Plugin {
             getConfig().setBoolean("timeTravels", true);
             getConfig().save();
         }
+        if (!getConfig().containsKey("blacklist")) {
+            getConfig().setBoolean("blacklist", false);
+            getConfig().save();
+        }
 
         getLogman().info(
                 String.format("Server started at %s which was %s seconds ago!", getConfig().getInt("timeStarted"), this
@@ -85,7 +92,7 @@ public final class PlayTimeLimiter extends Plugin {
 
         // Enable Commands
         try {
-            Canary.commands().registerCommands(new PlayTimeCommands(this), this, false);
+            Canary.commands().registerCommands(new PlayTimeCommand(this), this, false);
         } catch (CommandDependencyException e) {
             e.printStackTrace();
         }
@@ -229,7 +236,11 @@ public final class PlayTimeLimiter extends Plugin {
             this.timePlayed.put(uuid, 0);
             this.savePlayTime();
         }
-        this.timeLoggedIn.put(uuid, (int) (System.currentTimeMillis() / 1000));
+        if (hasPlayTime(uuid)) {
+            this.timeLoggedIn.put(uuid, (int) (System.currentTimeMillis() / 1000));
+        } else {
+            this.timeLoggedIn.put(uuid, 0);
+        }
     }
 
     public void setPlayerLoggedOut(OfflinePlayer player) {
@@ -293,6 +304,63 @@ public final class PlayTimeLimiter extends Plugin {
 
     private void sentPlayerWarningMessage(String uuid, int time) {
         this.seenWarningMessages.put(uuid + ":" + time, true);
+    }
+
+    public void loadBlacklist(OfflinePlayer player) {
+        loadBlacklist(player.getUUIDString());
+    }
+
+    public void loadBlacklist(Player player) {
+        loadBlacklist(player.getUUIDString());
+    }
+
+    private void loadBlacklist(String uuid) {
+        if (getConfig().getBoolean("blacklist")) {
+            PlayTimeBlacklistAccess dataAccess = new PlayTimeBlacklistAccess();
+            try {
+                HashMap<String, Object> filter = new HashMap<String, Object>();
+                filter.put("player_uuid", uuid);
+
+                Database.get().load(dataAccess, filter);
+            } catch (DatabaseReadException e) {
+                getLogman().warn("Failed to read from database", e);
+            }
+            if (dataAccess.hasData()) {
+                blacklist.put(dataAccess.uuid, dataAccess.blacklisted);
+            } else {
+                blacklist.put(uuid, true);
+            }
+        }
+    }
+
+    public boolean hasPlayTime(OfflinePlayer player) {
+        return hasPlayTime(player.getUUIDString());
+    }
+
+    public boolean hasPlayTime(Player player) {
+        return hasPlayTime(player.getUUIDString());
+    }
+
+    private boolean hasPlayTime(String uuid) {
+        if (!blacklist.containsKey(uuid)) {
+            loadBlacklist(uuid);
+        }
+        return blacklist.get(uuid);
+    }
+
+    public void addToPlayTimeBlacklist(OfflinePlayer player, boolean add) {
+        addToPlayTimeBlacklist(player.getUUIDString(), add);
+    }
+
+    public void addToPlayTimeBlacklist(Player player, boolean add) {
+        addToPlayTimeBlacklist(player.getUUIDString(), add);
+    }
+
+    private void addToPlayTimeBlacklist(String uuid, boolean add) {
+        if (!blacklist.containsKey(uuid)) {
+            loadBlacklist(uuid);
+        }
+        blacklist.replace(uuid, add);
     }
 
     public boolean start() {
@@ -397,6 +465,23 @@ public final class PlayTimeLimiter extends Plugin {
             PlayTimeDataAccess dataAccess = new PlayTimeDataAccess();
             dataAccess.uuid = key;
             dataAccess.playtime = this.timePlayed.get(key);
+
+            HashMap<String, Object> filter = new HashMap<String, Object>();
+            filter.put("player_uuid", key);
+
+            try {
+                Database.get().update(dataAccess, filter);
+            } catch (DatabaseWriteException e) {
+                getLogman().warn("Failed to write to database", e);
+            }
+        }
+    }
+
+    public void saveBlacklist() {
+        for (String key : this.blacklist.keySet()) {
+            PlayTimeBlacklistAccess dataAccess = new PlayTimeBlacklistAccess();
+            dataAccess.uuid = key;
+            dataAccess.blacklisted = this.blacklist.get(key);
 
             HashMap<String, Object> filter = new HashMap<String, Object>();
             filter.put("player_uuid", key);
