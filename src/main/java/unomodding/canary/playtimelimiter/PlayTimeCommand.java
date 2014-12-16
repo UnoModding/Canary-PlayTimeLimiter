@@ -225,6 +225,10 @@ public class PlayTimeCommand implements CommandListener {
         } else if (parameters.length == 2
                 && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1].equals("check"))) {
             return TabCompleteHelper.matchTo(parameters, Canary.getServer().getKnownPlayerNames());
+        } else if(parameters.length == 2 && parameters[1].equals("blacklist")) {
+            return TabCompleteHelper.matchTo(parameters, new String[] { "add", "remove" });
+        } else if(parameters.length == 3 && parameters[1].equals("blacklist") && (parameters[2].equals("add") || parameters[2].equals("remove"))) {
+            return TabCompleteHelper.matchTo(parameters, Canary.getServer().getKnownPlayerNames());
         } else {
             return null;
         }
