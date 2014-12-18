@@ -80,6 +80,14 @@ public final class PlayTimeLimiter extends Plugin {
             getConfig().setBoolean("timeTravels", true);
             getConfig().save();
         }
+        if (!getConfig().containsKey("timeCap")) {
+            getConfig().setBoolean("timeCap", true);
+            getConfig().save();
+        }
+        if (!getConfig().containsKey("timeCapValue")) {
+            getConfig().setInt("timeCapValue", 18000);
+            getConfig().save();
+        }
         if (!getConfig().containsKey("blacklist")) {
             getConfig().setBoolean("blacklist", false);
             getConfig().save();
