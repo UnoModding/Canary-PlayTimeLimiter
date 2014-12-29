@@ -43,12 +43,20 @@ public final class PlayTimeLimiter extends Plugin {
 
     private boolean started = false;
     private final Gson GSON = new Gson();
+    private PlayTimeSaverTask playTimeSaverTask;
+    private PlayTimeCheckerTask playTimeCheckerTask;
 
     @Override
     public void disable() {
+        // Save the playtime to database on plugin disable
         this.savePlayTime();
         this.saveBlacklist();
-        // Save the playtime to database on plugin disable
+
+        // Remove the tasks from TaskManager
+        TaskManager.removeTask(playTimeSaverTask);
+        TaskManager.removeTask(playTimeCheckerTask);
+        playTimeSaverTask = null;
+        playTimeCheckerTask = null;
     }
 
     @Override
@@ -103,9 +111,11 @@ public final class PlayTimeLimiter extends Plugin {
             e.printStackTrace();
         }
 
-        TaskManager.scheduleContinuedTaskInSeconds(new PlayTimeSaverTask(this), 30000,
+        playTimeSaverTask = new PlayTimeSaverTask(this);
+
+        TaskManager.scheduleContinuedTaskInSeconds(playTimeSaverTask, 30000,
                 getConfig().getInt("secondsBetweenPlayTimeSaving"));
-        TaskManager.scheduleContinuedTaskInSeconds(new PlayTimeCheckerTask(this), 30000,
+        TaskManager.scheduleContinuedTaskInSeconds(playTimeCheckerTask, 30000,
                 getConfig().getInt("secondsBetweenPlayTimeChecks"));
 
         // Load any players that may be on at plugin enable
