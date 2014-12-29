@@ -12,7 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
 
 import net.canarymod.Canary;
 import net.canarymod.api.OfflinePlayer;
@@ -24,6 +23,7 @@ import net.canarymod.database.exceptions.DatabaseReadException;
 import net.canarymod.database.exceptions.DatabaseWriteException;
 import net.canarymod.plugin.Plugin;
 
+import net.visualillusionsent.utils.TaskManager;
 import org.mcstats.Metrics;
 
 import unomodding.canary.playtimelimiter.data.PlayTimeBlacklistAccess;
@@ -41,8 +41,6 @@ public final class PlayTimeLimiter extends Plugin {
     private Map<String, Boolean> seenWarningMessages = new HashMap<String, Boolean>();
     private Map<String, Boolean> blacklist = new HashMap<String, Boolean>();
 
-    private Timer savePlayTimeTimer = null;
-    private Timer checkPlayTimeTimer = null;
     private boolean started = false;
     private final Gson GSON = new Gson();
 
@@ -105,16 +103,10 @@ public final class PlayTimeLimiter extends Plugin {
             e.printStackTrace();
         }
 
-        if (savePlayTimeTimer == null) {
-            this.savePlayTimeTimer = new Timer();
-            this.savePlayTimeTimer.scheduleAtFixedRate(new PlayTimeSaverTask(this), 30000,
-                    getConfig().getInt("secondsBetweenPlayTimeSaving") * 1000);
-        }
-        if (checkPlayTimeTimer == null) {
-            this.checkPlayTimeTimer = new Timer();
-            this.checkPlayTimeTimer.scheduleAtFixedRate(new PlayTimeCheckerTask(this), 30000,
-                    getConfig().getInt("secondsBetweenPlayTimeChecks") * 1000);
-        }
+        TaskManager.scheduleContinuedTaskInSeconds(new PlayTimeSaverTask(this), 30000,
+                getConfig().getInt("secondsBetweenPlayTimeSaving"));
+        TaskManager.scheduleContinuedTaskInSeconds(new PlayTimeCheckerTask(this), 30000,
+                getConfig().getInt("secondsBetweenPlayTimeChecks"));
 
         // Load any players that may be on at plugin enable
         for (Player player : Canary.getServer().getPlayerList()) {

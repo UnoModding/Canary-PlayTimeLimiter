@@ -17,14 +17,13 @@ import unomodding.canary.playtimelimiter.PlayTimeLimiter;
 import unomodding.canary.playtimelimiter.utils.FileUtils;
 import unomodding.canary.playtimelimiter.utils.Timestamper;
 
-public class PlayTimeCheckerTask extends TimerTask {
+public class PlayTimeCheckerTask implements Runnable {
     private final PlayTimeLimiter plugin;
 
     public PlayTimeCheckerTask(PlayTimeLimiter instance) {
         this.plugin = instance;
     }
 
-    @Override
     public void run() {
         for (Player player : Canary.getServer().getPlayerList()) {
             if (plugin.hasPlayTime(player)) {
