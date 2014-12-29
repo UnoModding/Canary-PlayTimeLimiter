@@ -1,4 +1,4 @@
 name=${project.name}
-main-class=unomodding.canary.playtimelimiter.PlayTimeLimiter
+main-class=$(mainclass}
 author=UnoModding
 version=${project.version}

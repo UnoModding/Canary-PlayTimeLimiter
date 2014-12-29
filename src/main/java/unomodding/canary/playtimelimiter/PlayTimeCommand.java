@@ -220,10 +220,11 @@ public class PlayTimeCommand implements CommandListener {
     @TabComplete(commands = { "playtime", "pt" })
     public List<String> playtimeTabComplete(MessageReceiver caller, String[] parameters) {
         if (parameters.length == 1) {
-            return TabCompleteHelper.matchTo(parameters, new String[] { "start", "stop", "add", "remove", "check",
-                    "blacklist" });
+            return TabCompleteHelper.matchTo(parameters, new String[] { "start", "stop", "add", "remove", "set",
+                    "check", "blacklist" });
         } else if (parameters.length == 2
-                && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1].equals("check"))) {
+                && (parameters[1].equals("add") || parameters[1].equals("remove") || parameters[1].equals("check")
+                    || parameters[1].equals("set"))) {
             return TabCompleteHelper.matchTo(parameters, Canary.getServer().getKnownPlayerNames());
         } else if(parameters.length == 2 && parameters[1].equals("blacklist")) {
             return TabCompleteHelper.matchTo(parameters, new String[] { "add", "remove" });

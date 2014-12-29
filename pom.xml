@@ -9,8 +9,14 @@
     <name>PlayTimeLimiter</name>
     <url>https://github.com/UnoModding/Canary-PlayTimeLimiter</url>
     <description>PlayTimeLimiter is a CanaryLib plugin for Minecraft servers to only allow players to limit the amount of time players spend on your server.</description>
-    <version>0.45-PRE</version>
+    <version>0.45-PRE2</version>
     <inceptionYear>2014</inceptionYear>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.jdk.version>1.6</project.jdk.version>
+        <mainclass>${project.groupId}.${project.artifactId}.${project.name}</mainclass>
+    </properties>
 
     <repositories>
         <repository>
