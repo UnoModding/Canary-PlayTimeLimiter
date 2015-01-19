@@ -134,3 +134,4 @@ Temporary Items
 *.un~
 Session.vim
 .netrwhist
+dependency-reduced-pom.xml

@@ -28,6 +28,13 @@
             <url>http://repo.mcstats.org/content/repositories/public</url>
         </repository>
     </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>lex-repo</id>
+            <url>http://lexware.github.io/Repo/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -56,6 +63,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
+            </plugin>
+            <plugin>
+                <groupId>io.github.lexware</groupId>
+                <artifactId>canary-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <configuration>
+                    <mainClass>${mainclass}</mainClass>
+                    <author>UnoModding</author>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>createconfig</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
